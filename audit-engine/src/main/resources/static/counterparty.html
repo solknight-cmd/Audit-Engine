@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | Counterparty Intelligence</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans selection:bg-[#D4AF37]/30 selection:text-white">
+
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 pt-6 pb-4 bg-[#111827] border-r border-white/10 z-40">
+    <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
+                <div class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">CA</div>
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-xs font-bold text-white truncate">Chief Auditor</div>
+                <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active Loop
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <div class="p-2 bg-[#D4AF37]/10 rounded border border-[#D4AF37]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white leading-tight">Forensic OS</div>
+            <div class="text-[11px] text-slate-500 font-mono tracking-wider">V.4.2.0-Stable</div>
+        </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="code.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Audit Desktop</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="analytics.html">
+            <span class="material-symbols-outlined">security</span>
+            <span class="text-sm font-medium">Risk Models</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="registry.html">
+            <span class="material-symbols-outlined">account_balance</span>
+            <span class="text-sm font-medium">Ledger Explorer</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37] transition-all" href="counterparty.html">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Counterparty Intelligence</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="systemhealth.html">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">System Health</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="ml-64 pt-2 min-h-screen p-6">
+    <div class="max-w-[1440px] mx-auto space-y-6">
+
+        <div class="flex justify-between items-end border-b border-white/5 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Counterparty Network Clearing Intelligence</h1>
+                <p class="text-sm text-slate-400">Map clearing relationships, exposure caps, and verification statuses across operational clearing nodes.</p>
+            </div>
+            <div>
+                <span class="text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">Node Clearance: Active</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-[#111827] p-5 border border-white/10 rounded-xl">
+                <div class="text-xs text-slate-400 uppercase font-semibold font-mono tracking-wider">Total Active Counterparties</div>
+                <div class="text-3xl font-mono font-bold text-white mt-1">4 Nodes</div>
+                <p class="text-[10px] text-slate-500 font-mono mt-1">Cross-institutional clearing pathways</p>
+            </div>
+            <div class="bg-[#111827] p-5 border border-white/10 rounded-xl">
+                <div class="text-xs text-slate-400 uppercase font-semibold font-mono tracking-wider">Aggregated Exposure Pool</div>
+                <div id="aggregateExposureText" class="text-3xl font-mono font-bold text-[#D4AF37] mt-1">$0.0M</div>
+                <p class="text-[10px] text-slate-500 font-mono mt-1">Calculated as 15% of active staging assets</p>
+            </div>
+            <div class="bg-[#111827] p-5 border border-white/10 rounded-xl">
+                <div class="text-xs text-slate-400 uppercase font-semibold font-mono tracking-wider">Network Integrity Level</div>
+                <div id="networkIntegrityText" class="text-3xl font-mono font-bold text-emerald-400 mt-1">SECURE</div>
+                <p class="text-[10px] text-slate-500 font-mono mt-1">Dynamic counterparty variance tracker</p>
+            </div>
+        </div>
+
+        <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+            <div class="p-4 bg-[#0b0f19]/40 border-b border-white/5 flex justify-between items-center">
+                <h3 class="text-xs font-bold uppercase font-mono text-[#D4AF37] tracking-wider">Linked Entity Verification Index</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                    <tr class="bg-[#0b0f19] text-slate-400 border-b border-white/10 text-[11px] uppercase tracking-wider font-mono">
+                        <th class="p-4">Counterparty ID</th>
+                        <th class="p-4">Clearing Node Name</th>
+                        <th class="p-4">Assigned Anchor Host</th>
+                        <th class="p-4">Maximum Risk Cap Allocation</th>
+                        <th class="p-4">Clearing Status</th>
+                    </tr>
+                    </thead>
+                    <tbody class="text-xs divide-y divide-white/5 font-mono">
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="p-4 text-slate-500">#CP-NEX-01</td>
+                        <td class="p-4 text-white font-bold">NEXUS_CLEARING_HOUSE</td>
+                        <td class="p-4 text-slate-300">NEXUS_VENTURES</td>
+                        <td id="capNexus" class="p-4 text-slate-400">$0.00</td>
+                        <td class="p-4"><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded font-bold text-[10px]">VERIFIED_NODE</span></td>
+                    </tr>
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="p-4 text-slate-500">#CP-GBL-02</td>
+                        <td class="p-4 text-white font-bold">GLOBAL_SETTLEMENT_CORP</td>
+                        <td class="p-4 text-slate-300">GLOBAL_CAPITAL_CORP</td>
+                        <td id="capGlobal" class="p-4 text-slate-400">$0.00</td>
+                        <td class="p-4"><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded font-bold text-[10px]">VERIFIED_NODE</span></td>
+                    </tr>
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="p-4 text-slate-500">#CP-ALP-03</td>
+                        <td class="p-4 text-white font-bold">ALPHA_LOGISTICS_TRUST</td>
+                        <td class="p-4 text-slate-300">ALPHA_LOGISTICS</td>
+                        <td id="capAlpha" class="p-4 text-slate-400">$0.00</td>
+                        <td class="p-4"><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded font-bold text-[10px]">VERIFIED_NODE</span></td>
+                    </tr>
+                    <tr id="anomalyCounterpartyRow" class="hover:bg-white/5 transition-colors">
+                        <td class="p-4 text-slate-500">#CP-UNK-99</td>
+                        <td class="p-4 text-red-400 font-bold">UNVERIFIED_SUSPENSE_NODE</td>
+                        <td class="p-4 text-slate-400 font-bold italic">MUTATED_LEAKS</td>
+                        <td id="capAnomaly" class="p-4 text-red-400 font-bold">$0.00</td>
+                        <td class="p-4"><span id="anomalyStatusBadge" class="px-2 py-0.5 rounded font-bold text-[10px]">SUSPENDED</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        calculateCounterpartyNetworkExposure();
+    });
+
+    function calculateCounterpartyNetworkExposure() {
+        const currentDataPool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
+
+        // Extract asset numbers directly out of standard system storage coordinates
+        const nexusAssets  = Number(currentDataPool["NEXUS_VENTURES"]?.assets || 0);
+        const globalAssets = Number(currentDataPool["GLOBAL_CAPITAL_CORP"]?.assets || 0);
+        const alphaAssets  = Number(currentDataPool["ALPHA_LOGISTICS"]?.assets || 0);
+
+        // Calculate maximum localized caps (simulating 15% ceiling thresholds)
+        const capNexusValue  = nexusAssets * 0.15;
+        const capGlobalValue = globalAssets * 0.15;
+        const capAlphaValue  = alphaAssets * 0.15;
+
+        // Map calculation values back onto table display selectors
+        document.getElementById("capNexus").innerText  = "$" + capNexusValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById("capGlobal").innerText = "$" + capGlobalValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById("capAlpha").innerText  = "$" + capAlphaValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+        // Compute total combined platform network risk allocation volume
+        const combinedAssetsPool = nexusAssets + globalAssets + alphaAssets;
+        const aggregatedExposure = combinedAssetsPool * 0.15;
+        document.getElementById("aggregateExposureText").innerText = "$" + (aggregatedExposure / 1000000).toFixed(1) + "M";
+
+        // CHECK IF ANOMALIES EXIST ANYWHERE INSIDE SYSTEM TRACKING LEDGERS
+        // If an asset mismatch has occurred on any profile, we trigger the unverified suspense node leak warnings!
+        let systemHasAnomalies = false;
+        Object.keys(currentDataPool).forEach(key => {
+            const record = currentDataPool[key];
+            if (Math.abs(Number(record.assets) - (Number(record.liabilities) + Number(record.equity))) > 0) {
+                systemHasAnomalies = true;
+            }
+        });
+
+        const anomalyRow = document.getElementById("anomalyCounterpartyRow");
+        const anomalyCapText = document.getElementById("capAnomaly");
+        const anomalyBadge = document.getElementById("anomalyStatusBadge");
+        const networkText = document.getElementById("networkIntegrityText");
+
+        if (systemHasAnomalies) {
+            // Anomaly Leak Alert State Triggered
+            anomalyRow.classList.remove("opacity-40");
+            anomalyCapText.innerText = "$1,500,000.00";
+            anomalyBadge.className = "px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded font-bold text-[10px]";
+            anomalyBadge.innerText = "FLAGGED_EXPOSURE";
+
+            networkText.innerText = "INTEGRITY_BREACH";
+            networkText.className = "text-3xl font-mono font-bold text-red-400 mt-1";
+        } else {
+            // Safe, Dormant System State
+            anomalyRow.classList.add("opacity-40");
+            anomalyCapText.innerText = "$0.00";
+            anomalyBadge.className = "px-2 py-0.5 bg-slate-800 text-slate-500 rounded font-bold text-[10px]";
+            anomalyBadge.innerText = "INACTIVE_HOLD";
+
+            networkText.innerText = "SECURE";
+            networkText.className = "text-3xl font-mono font-bold text-emerald-400 mt-1";
+        }
+    }
+</script>
+
+</body>
+</html>

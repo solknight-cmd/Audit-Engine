@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | System Health</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans selection:bg-[#D4AF37]/30 selection:text-white">
+
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 pt-6 pb-4 bg-[#111827] border-r border-white/10 z-40">
+    <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
+                <div class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">CA</div>
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-xs font-bold text-white truncate">Chief Auditor</div>
+                <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active Loop
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <div class="p-2 bg-[#D4AF37]/10 rounded border border-[#D4AF37]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white leading-tight">Forensic OS</div>
+            <div class="text-[11px] text-slate-500 font-mono tracking-wider">V.4.2.0-Stable</div>
+        </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="code.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Audit Desktop</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="analytics.html">
+            <span class="material-symbols-outlined">security</span>
+            <span class="text-sm font-medium">Risk Models</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="registry.html">
+            <span class="material-symbols-outlined">account_balance</span>
+            <span class="text-sm font-medium">Ledger Explorer</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="counterparty.html">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Counterparty Intelligence</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37] transition-all" href="systemhealth.html">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">System Health</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="ml-64 pt-2 min-h-screen p-6">
+    <div class="max-w-[1440px] mx-auto space-y-6">
+
+        <div class="flex justify-between items-end border-b border-white/5 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">System Core Operational Diagnostics</h1>
+                <p class="text-sm text-slate-400">Monitor background database engine clusters, extraction pipeline latencies, and transaction capacities.</p>
+            </div>
+            <div>
+                <button onclick="clearSystemCaches()" class="text-[10px] uppercase font-mono font-bold tracking-wider px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded hover:bg-red-500/20 transition-all">
+                    Reset App Storage
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl space-y-4">
+                <h3 class="text-xs font-bold font-mono text-[#D4AF37] uppercase tracking-wider flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">dns</span> Database Performance Cluster
+                </h3>
+
+                <div class="space-y-3 text-xs font-mono">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">LocalStorage Registry Utilization</span>
+                            <span class="text-white font-bold">14.2 KB / 5.0 MB</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-gradient-to-r from-[#D4AF37] to-[#bfa032] h-full" style="width: 5%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Ledger Index Search Latency</span>
+                            <span class="text-emerald-400 font-bold">12ms (OPTIMAL)</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full" style="width: 15%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl space-y-4">
+                <h3 class="text-xs font-bold font-mono text-[#D4AF37] uppercase tracking-wider flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">memory</span> AI Forensic Parsing Pipeline
+                </h3>
+
+                <div class="space-y-3 text-xs font-mono">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">File Ingestion Thread Status</span>
+                            <span id="pipelineStatusText" class="text-emerald-400 font-bold">STABLE_IDLE</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div id="pipelineStatusBar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">Staged Block History Queue</span>
+                            <span id="blockQueueText" class="text-white font-bold">0 Active Blocks</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div id="blockQueueBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+            <div class="p-4 bg-[#0b0f19]/50 border-b border-white/5 font-mono text-[11px] text-[#D4AF37] tracking-wider uppercase font-bold">
+                Diagnostics Core Stream Logs
+            </div>
+            <div id="healthDiagnosticConsole" class="p-4 h-64 overflow-y-auto bg-[#060913] font-mono text-xs text-slate-400 space-y-1 custom-scrollbar">
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        evaluateOperationalHealthMetrics();
+    });
+
+    function evaluateOperationalHealthMetrics() {
+        const consoleLog = document.getElementById("healthDiagnosticConsole");
+        if (!consoleLog) return;
+
+        const auditChain = JSON.parse(localStorage.getItem("AuditBlockHistoryChain")) || [];
+        const currentDataPool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
+
+        const timeString = new Date().toLocaleTimeString();
+        consoleLog.innerHTML = `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-blue-400">[KERNEL]</span> Bootstrapping diagnostics loop sequences...</div>`;
+
+        // Check for active accounting mismatch anomalies inside data pool
+        let anomaliesFound = false;
+        Object.keys(currentDataPool).forEach(key => {
+            const record = currentDataPool[key];
+            if (Math.abs(Number(record.assets) - (Number(record.liabilities) + Number(record.equity))) > 0) {
+                anomaliesFound = true;
+            }
+        });
+
+        // Track committed entries count
+        const blockCount = auditChain.length;
+        document.getElementById("blockQueueText").innerText = `${blockCount} Committed Blocks`;
+
+        // Dynamic resizing bar gauge logic
+        const targetPercentage = Math.min(blockCount * 25, 100);
+        document.getElementById("blockQueueBar").style.width = targetPercentage + "%";
+
+        // Adjust telemetry components based on global storage conditions
+        if (anomaliesFound) {
+            document.getElementById("pipelineStatusText").innerText = "ISOLATION_WARN";
+            document.getElementById("pipelineStatusText").className = "text-red-400 font-bold";
+            document.getElementById("pipelineStatusBar").className = "bg-red-500 h-full transition-all duration-300";
+            document.getElementById("pipelineStatusBar").style.width = "100%";
+
+            consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-red-400">[CORE_ALERT]</span> Pipeline anomaly state isolation triggered. Sub-thread indices mismatched.</div>`;
+            consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-slate-500">[SYSTEM]</span> Dynamic analytical metrics routing online.</div>`;
+        } else {
+            document.getElementById("pipelineStatusText").innerText = "STABLE_IDLE";
+            document.getElementById("pipelineStatusText").className = "text-emerald-400 font-bold";
+            document.getElementById("pipelineStatusBar").className = "bg-emerald-500 h-full transition-all duration-300";
+            document.getElementById("pipelineStatusBar").style.width = "20%";
+
+            consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-emerald-400">[HEALTH_OK]</span> Thread worker clusters synchronized safely.</div>`;
+        }
+
+        consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-slate-400">[STORAGE]</span> Shared matrix block map resolved with ${blockCount} structural references.</div>`;
+    }
+
+    function clearSystemCaches() {
+        if (confirm("Are you absolutely sure you want to clear your global cache registries? This will purge all added blockchain historical blocks and revert company records to structural seeds.")) {
+            localStorage.clear();
+            alert("Local storage wiped clean. Refreshing interface...");
+            window.location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
