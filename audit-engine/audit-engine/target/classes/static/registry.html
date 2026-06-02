@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | Ledger Explorer</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans selection:bg-[#D4AF37]/30 selection:text-white">
+
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 pt-6 pb-4 bg-[#111827] border-r border-white/10 z-40">
+    <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
+                <div class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">CA</div>
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-xs font-bold text-white truncate">Chief Auditor</div>
+                <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active Loop
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <div class="p-2 bg-[#D4AF37]/10 rounded border border-[#D4AF37]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white leading-tight">Forensic OS</div>
+            <div class="text-[11px] text-slate-500 font-mono tracking-wider">V.4.2.0-Stable</div>
+        </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="code.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Audit Desktop</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="analytics.html">
+            <span class="material-symbols-outlined">security</span>
+            <span class="text-sm font-medium">Risk Models</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37] transition-all" href="registry.html">
+            <span class="material-symbols-outlined">account_balance</span>
+            <span class="text-sm font-medium">Ledger Explorer</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="counterparty.html">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Counterparty Intelligence</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="systemhealth.html">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">System Health</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="ml-64 pt-2 min-h-screen p-6">
+    <div class="max-w-[1440px] mx-auto space-y-6">
+
+        <div class="flex justify-between items-end border-b border-white/5 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Ledger Explorer Matrix</h1>
+                <p class="text-sm text-slate-400">Deep structural lookup of historical balances and cryptographic audit chains.</p>
+            </div>
+            <div>
+                <span class="text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]/20">Global Ledger Feed</span>
+            </div>
+        </div>
+
+        <div class="bg-[#111827] p-4 border border-white/10 rounded-xl flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="w-full md:w-72 relative">
+                <span class="material-symbols-outlined absolute left-3 top-2.5 text-sm text-slate-500">search</span>
+                <input id="matrixSearchInput" oninput="filterExplorerTable()" class="pl-9 pr-4 py-2 w-full bg-[#0b0f19] border border-white/10 text-xs text-white focus:outline-none focus:border-[#D4AF37] rounded outline-none" placeholder="Search Company or Block Link..." type="text"/>
+            </div>
+            <div class="flex gap-3 w-full md:w-auto justify-end">
+                <select id="statusFilter" onchange="filterExplorerTable()" class="bg-[#0b0f19] border border-white/10 rounded px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#D4AF37]">
+                    <option value="ALL">ALL VERDICTS</option>
+                    <option value="PASSED">PASSED ONLY</option>
+                    <option value="ANOMALY_DETECTED">ANOMALIES ONLY</option>
+                </select>
+            </div>
+        </div>
+
+        <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                    <tr class="bg-[#0b0f19] text-[#D4AF37] border-b border-white/10">
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Block Matrix Link</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Timestamp</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Company Profile</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Document Category</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Extracted Financials</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Audit Verdict</th>
+                    </tr>
+                    </thead>
+                    <tbody id="explorerTableBody" class="text-xs divide-y divide-white/5">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        renderExplorerTable();
+    });
+
+    function renderExplorerTable() {
+        const tableBody = document.getElementById("explorerTableBody");
+        if (!tableBody) return;
+
+        // Pull the live chain from the global browser cache
+        const auditChain = JSON.parse(localStorage.getItem("AuditBlockHistoryChain")) || [];
+        const storagePool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
+
+        tableBody.innerHTML = "";
+
+        if (auditChain.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="p-8 text-center text-slate-500 font-mono">
+                        No cryptographic blockchain blocks generated yet. Return to Audit Desktop to stage transactions.
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        auditChain.forEach(block => {
+            const isAnomaly = block.status === "ANOMALY_DETECTED";
+
+            // Fetch company specific numbers stored alongside this snapshot reference
+            const companyMetrics = storagePool[block.company] || { assets: 0, liabilities: 0, equity: 0 };
+            const metricsString = `A: $${(companyMetrics.assets/1000000).toFixed(1)}M | L: $${(companyMetrics.liabilities/1000000).toFixed(1)}M | E: $${(companyMetrics.equity/1000000).toFixed(1)}M`;
+
+            const badgeStyle = isAnomaly
+                ? `<span class="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded font-bold font-mono">ANOMALY_DETECTED</span>`
+                : `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-bold font-mono">PASSED</span>`;
+
+            const row = document.createElement("tr");
+            row.className = "hover:bg-white/5 transition-colors border-b border-white/5";
+            row.setAttribute("data-status", block.status);
+            row.innerHTML = `
+                <td class="p-4 font-mono text-[#D4AF37]">#${block.id}</td>
+                <td class="p-4 text-slate-400 font-mono">${block.timestamp}</td>
+                <td class="p-4 font-bold text-white">${block.company}</td>
+                <td class="p-4"><span class="px-2 py-0.5 bg-white/5 rounded text-slate-300">${block.docType}</span></td>
+                <td class="p-4 text-slate-400 font-mono text-[11px]">${metricsString}</td>
+                <td class="p-4">${badgeStyle}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Matrix search and breakdown filters execution block
+    function filterExplorerTable() {
+        const searchText = document.getElementById("matrixSearchInput").value.toUpperCase();
+        const statusFilter = document.getElementById("statusFilter").value;
+        const rows = document.querySelectorAll("#explorerTableBody tr");
+
+        rows.forEach(row => {
+            if (!row.getAttribute("data-status")) return; // skip empty messages
+
+            const matchesSearch = row.innerText.toUpperCase().includes(searchText);
+            const matchesStatus = (statusFilter === "ALL" || row.getAttribute("data-status") === statusFilter);
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | Forensic OS</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .gold-glow:focus {
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+            border-color: #D4AF37 !important;
+        }
+        .pulse-anomaly {
+            animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .6; transform: scale(1.05); }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans selection:bg-[#D4AF37]/30 selection:text-white">
+
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 pt-6 pb-4 bg-[#111827] border-r border-white/10 z-40">
+
+    <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
+                <div class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">CA</div>
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-xs font-bold text-white truncate">Chief Auditor</div>
+                <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active Loop
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-1">
+            <button class="text-slate-400 hover:text-[#D4AF37] p-1 transition-colors" title="Notifications">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+            </button>
+            <button onclick="triggerSystemNotification('Loading Core Configuration Context Options...')" class="text-slate-400 hover:text-[#D4AF37] p-1 transition-colors" title="Settings">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <div class="p-2 bg-[#D4AF37]/10 rounded border border-[#D4AF37]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white leading-tight">Forensic OS</div>
+            <div class="text-[11px] text-slate-500 font-mono tracking-wider">V.4.2.0-Stable</div>
+        </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37] transition-all" href="code.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Audit Desktop</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="analytics.html">
+            <span class="material-symbols-outlined">security</span>
+            <span class="text-sm font-medium">Risk Models</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="registry.html">
+            <span class="material-symbols-outlined">account_balance</span>
+            <span class="text-sm font-medium">Ledger Explorer</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="counterparty.html">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Counterparty Intelligence</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="systemhealth.html">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">System Health</span>
+        </a>
+    </nav>
+
+    <div class="px-6 mt-auto space-y-4">
+        <a class="flex items-center gap-2 px-6 py-2 text-xs text-slate-400 hover:text-[#D4AF37] transition-all" href="javascript:void(0)" onclick="toggleUtilityModal('settingsModal', true)">
+            <span class="material-symbols-outlined text-sm">settings</span> System Settings
+        </a>
+        <a class="flex items-center gap-2 px-6 py-2 text-xs text-slate-400 hover:text-[#D4AF37] transition-all" href="javascript:void(0)" onclick="toggleUtilityModal('supportModal', true)">
+            <span class="material-symbols-outlined text-sm">contact_support</span> Support
+        </a>
+        <a class="flex items-center gap-2 px-6 py-2 text-xs text-slate-400 hover:text-[#D4AF37] transition-all" href="javascript:void(0)" onclick="toggleUtilityModal('docsModal', true)">
+            <span class="material-symbols-outlined text-sm">description</span> Documentation
+        </a>
+        </div>
+    </div>
+</aside>
+
+<main class="ml-64 pt-2 min-h-screen p-6">
+    <div class="max-w-[1440px] mx-auto space-y-6">
+
+        <div class="flex justify-between items-end border-b border-white/5 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Dynamic Corporate Standing Snapshot</h1>
+                <p class="text-sm text-slate-400">Real-time computational analysis of verified corporate ledgers.</p>
+            </div>
+            <div>
+                <span id="globalStateBadge" class="text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">System Steady</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl relative overflow-hidden bg-gradient-to-b from-[#111827] to-[#0d131f]">
+                <div class="absolute top-0 left-0 w-full h-[2px] bg-[#D4AF37]"></div>
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Total Assets</span>
+                    <span class="material-symbols-outlined text-sm text-[#D4AF37]">account_balance_wallet</span>
+                </div>
+                <div id="displayAssets" class="text-4xl font-mono font-bold text-white mt-2">$0</div>
+                <div class="flex gap-1 mt-4 h-1.5 opacity-30">
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                </div>
+            </div>
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl relative overflow-hidden bg-gradient-to-b from-[#111827] to-[#0d131f]">
+                <div class="absolute top-0 left-0 w-full h-[2px] bg-slate-700"></div>
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Total Liabilities</span>
+                    <span class="material-symbols-outlined text-sm text-slate-500">trending_down</span>
+                </div>
+                <div id="displayLiabilities" class="text-4xl font-mono font-bold text-white mt-2">$0</div>
+                <div class="flex gap-1 mt-4 h-1.5 opacity-30">
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                </div>
+            </div>
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl relative overflow-hidden bg-gradient-to-b from-[#111827] to-[#0d131f]">
+                <div class="absolute top-0 left-0 w-full h-[2px] bg-slate-700"></div>
+                <div class="flex justify-between items-center text-slate-400 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Net Equity</span>
+                    <span class="material-symbols-outlined text-sm text-slate-500">pie_chart</span>
+                </div>
+                <div id="displayEquity" class="text-4xl font-mono font-bold text-white mt-2">$0</div>
+                <div class="flex gap-1 mt-4 h-1.5 opacity-30">
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                    <div class="flex-1 bg-slate-600 rounded-sm"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl flex flex-col justify-between h-full">
+                <div>
+                    <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-[#D4AF37]">input</span>
+                        Inbound Gateway Interface
+                    </h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase">Company Profile Target</label>
+                            <select id="companySelect" onchange="loadCompanyProfileData()" class="w-full bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37] gold-glow transition-all font-mono">
+                                <option value="GLOBAL_CAPITAL_CORP">GLOBAL_CAPITAL_CORP</option>
+                                <option value="NEXUS_VENTURES">NEXUS_VENTURES</option>
+                                <option value="ALPHA_LOGISTICS">ALPHA_LOGISTICS</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase">Document Category</label>
+                            <select id="docTypeSelect" class="w-full bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37] gold-glow transition-all">
+                                <option value="Balance Sheet">Balance Sheet</option>
+                                <option value="Income Statement">Income Statement</option>
+                                <option value="Ledger Matrix">Ledger Matrix Row</option>
+                            </select>
+                        </div>
+
+                        <div class="pt-2 grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase font-mono">Assets ($)</label>
+                                <input type="number" id="inputAssets" value="12500000" class="w-full bg-[#0b0f19] border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none focus:border-[#D4AF37] gold-glow">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase font-mono">Liabilities ($)</label>
+                                <input type="number" id="inputLiabilities" value="8200000" class="w-full bg-[#0b0f19] border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none focus:border-[#D4AF37] gold-glow">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-medium text-slate-400 mb-1 uppercase font-mono">Equity ($)</label>
+                                <input type="number" id="inputEquity" value="4300000" class="w-full bg-[#0b0f19] border border-white/10 rounded p-2 text-xs font-mono text-white focus:outline-none focus:border-[#D4AF37] gold-glow">
+                            </div>
+                        </div>
+
+                        <input type="file" id="forensicFileInput" class="hidden" accept=".pdf,.xlsx,.csv">
+                        <div id="dropZone" class="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-[#D4AF37]/50 transition-all cursor-pointer bg-[#0b0f19]/30 group">
+                            <span class="material-symbols-outlined text-3xl text-slate-500 group-hover:text-[#D4AF37] transition-colors mb-2">cloud_upload</span>
+                            <p id="dropZonePrompt" class="text-xs text-slate-300 font-medium">Drag & drop forensic financial assets here or <span class="text-[#D4AF37] underline">browse</span></p>
+                            <p class="text-[10px] text-slate-500 mt-1 font-mono">Supported parameters: PDF, XLSX, CSV</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="commitImmutableAuditRecord()" class="w-full mt-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-slate-950 font-bold text-xs rounded uppercase tracking-wider flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-md shadow-gold/10">
+                    <span class="material-symbols-outlined text-sm font-bold">lock</span>
+                    Commit Immutable Audit
+                </button>
+            </div>
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl lg:col-span-2 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm text-[#D4AF37]">analytics</span>
+                            Forensic System Processing Log Feed
+                        </h2>
+                        <span class="font-mono text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">NODE: VAI-SYS-01</span>
+                    </div>
+
+                    <div id="processingStreamFeed" class="space-y-2 font-mono text-xs h-64 overflow-y-auto custom-scrollbar bg-[#0b0f19]/60 border border-white/5 p-4 rounded-lg text-slate-400">
+                        <div class="flex gap-3"><span class="text-slate-600">[00:00:01]</span> <span class="text-[#D4AF37]">[SYS_INIT]</span> Forensic Engine standing by...</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+            <div class="p-6 border-b border-white/5 flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[#D4AF37]">inventory_2</span>
+                    <h3 class="text-md font-bold text-white tracking-tight">Immutable Audit Vault Registry</h3>
+                </div>
+                <div class="flex gap-2">
+                    <input id="tableSearchInput" oninput="filterRegistryTable()" class="pl-4 pr-4 py-1.5 w-48 bg-[#0b0f19] border border-white/10 text-xs text-white focus:outline-none focus:border-[#D4AF37] outline-none rounded" placeholder="Search entries..." type="text"/>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                    <tr class="bg-[#0b0f19] text-[#D4AF37] border-b border-white/10">
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Block Matrix Link</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Timestamp</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Company ID</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">Document Type</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider">AI Verdict Status</th>
+                        <th class="p-4 text-xs uppercase font-semibold font-mono tracking-wider text-right">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="vaultTableBody" class="text-xs divide-y divide-white/5">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<div id="toastFeedbackNotification" class="hidden fixed bottom-6 right-6 bg-slate-900 border border-[#D4AF37] text-white text-xs font-mono px-4 py-3 rounded-lg shadow-2xl z-50 flex items-center gap-2 transition-all">
+    <span class="material-symbols-outlined text-sm text-[#D4AF37]">info</span>
+    <span id="toastMessageNode">System State Sync Processed Successfully</span>
+</div>
+
+<div id="forensicDrawer" class="fixed inset-0 z-50 overflow-hidden hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-[#060913]/70 backdrop-blur-sm transition-opacity" onclick="closeForensicDrawer()"></div>
+
+    <div class="absolute inset-y-0 right-0 pl-10 max-w-full flex">
+        <div class="w-screen max-w-md bg-[#111827] border-l border-white/10 shadow-2xl flex flex-col justify-between">
+
+            <div class="p-6 border-b border-white/5 bg-[#0b0f19]/50 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[#D4AF37]">analytics</span>
+                    <div>
+                        <h2 class="text-sm font-bold text-white tracking-tight" id="drawerBlockId">Block Audit Payload</h2>
+                        <p class="text-[11px] font-mono text-slate-400" id="drawerTimestamp">Timestamp: --</p>
+                    </div>
+                </div>
+                <button onclick="closeForensicDrawer()" class="text-slate-400 hover:text-white rounded-lg p-1 hover:bg-white/5 transition-all">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+
+                <div class="space-y-3">
+                    <label class="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-semibold block">Target Profile Entity</label>
+                    <div class="p-4 bg-[#0b0f19] border border-white/5 rounded-xl flex justify-between items-center">
+                        <span id="drawerCompanyId" class="text-sm font-bold text-white font-mono">--</span>
+                        <span id="drawerDocBadge" class="px-2 py-0.5 bg-white/5 rounded text-slate-300 text-[10px] font-mono">--</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-semibold block">Audit Snapshot Values</label>
+                    <div class="grid grid-cols-3 gap-2 text-center font-mono">
+                        <div class="p-3 bg-white/5 rounded-lg border border-white/5">
+                            <div class="text-[10px] text-slate-400 uppercase">Assets</div>
+                            <div id="drawerAssets" class="text-xs font-bold text-white mt-1">$0</div>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg border border-white/5">
+                            <div class="text-[10px] text-slate-400 uppercase">Liabilities</div>
+                            <div id="drawerLiabilities" class="text-xs font-bold text-white mt-1">$0</div>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg border border-white/5">
+                            <div class="text-[10px] text-slate-400 uppercase">Equity</div>
+                            <div id="drawerEquity" class="text-xs font-bold text-white mt-1">$0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-gradient-to-b from-[#161f30] to-[#111827] border border-white/10 rounded-xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-white">Equation Variance Meter</span>
+                        <span id="drawerVerdictLabel" class="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded">--</span>
+                    </div>
+
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="drawerVarianceBar" class="h-full w-0 transition-all duration-500"></div>
+                    </div>
+
+                    <div class="flex justify-between items-center text-[11px] font-mono">
+                        <span class="text-slate-400">Equation Discrepancy:</span>
+                        <span id="drawerVarianceText" class="font-bold text-white">$0</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-semibold block">Prescriptive Remediation Engine</label>
+                    <div id="drawerRecommendationsBox" class="p-4 rounded-xl border text-xs leading-relaxed space-y-2">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-4 border-t border-white/5 bg-[#0b0f19]/30 grid grid-cols-2 gap-3">
+                <button onclick="closeForensicDrawer()" class="py-2 text-center text-xs text-slate-400 border border-white/10 hover:border-white/20 hover:text-white rounded font-medium transition-all">
+                    Dismiss View
+                </button>
+                <button id="btnExportLedger" onclick="exportAuditLedgerToCSV()" class="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-mono font-bold text-slate-300 rounded border border-white/10 transition-all">
+                    <span class="material-symbols-outlined text-sm">download</span> Export Ledger
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="settingsModal" class="fixed inset-0 z-50 overflow-hidden hidden bg-[#060913]/80 backdrop-blur-sm flex items-center justify-center">
+    <div class="w-full max-w-md bg-[#111827] border border-white/10 rounded-xl p-6 space-y-4 shadow-2xl">
+        <div class="flex items-center gap-3 border-b border-white/5 pb-3">
+            <span class="material-symbols-outlined text-[#D4AF37]">settings</span>
+            <h3 class="text-sm font-bold text-white uppercase font-mono">System Parameters Configuration</h3>
+        </div>
+        <div class="space-y-3 text-xs">
+            <div class="flex justify-between items-center bg-[#0b0f19] p-3 rounded border border-white/5">
+                <span class="text-slate-400">AI OCR Parsing Strictness</span>
+                <span class="text-[#D4AF37] font-mono font-bold">MAX_AGGRESSIVE</span>
+            </div>
+            <div class="flex justify-between items-center bg-[#0b0f19] p-3 rounded border border-white/5">
+                <span class="text-slate-400">Cryptographic Ledger Mode</span>
+                <span class="text-emerald-400 font-mono font-bold">SHA-256 / IMMUTABLE</span>
+            </div>
+        </div>
+        <button onclick="toggleUtilityModal('settingsModal', false)" class="w-full py-2 bg-white/5 hover:bg-white/10 text-xs font-mono rounded border border-white/10 transition-all text-slate-300">
+            Close Config Panel
+        </button>
+    </div>
+</div>
+
+<div id="supportModal" class="fixed inset-0 z-50 overflow-hidden hidden bg-[#060913]/80 backdrop-blur-sm flex items-center justify-center">
+    <div class="w-full max-w-md bg-[#111827] border border-white/10 rounded-xl p-6 space-y-4 shadow-2xl">
+        <div class="flex items-center gap-3 border-b border-white/5 pb-3">
+            <span class="material-symbols-outlined text-[#D4AF37]">contact_support</span>
+            <h3 class="text-sm font-bold text-white uppercase font-mono">Forensic Node Helpdesk</h3>
+        </div>
+        <p class="text-xs text-slate-400 leading-relaxed">
+            Need tactical architectural assistance with ledger balancing or OCR extraction variables? Reach out to your localized network administrator group.
+        </p>
+        <div class="bg-[#0b0f19] p-3 rounded border border-white/5 text-center text-xs font-mono text-slate-300">
+            Node Tech Line: <span class="text-[#D4AF37]">support@vault-audit.local</span>
+        </div>
+        <button onclick="toggleUtilityModal('supportModal', false)" class="w-full py-2 bg-white/5 hover:bg-white/10 text-xs font-mono rounded border border-white/10 transition-all text-slate-300">
+            Exit Support Portal
+        </button>
+    </div>
+</div>
+
+<div id="docsModal" class="fixed inset-0 z-50 overflow-hidden hidden bg-[#060913]/80 backdrop-blur-sm flex items-center justify-center">
+    <div class="w-full max-w-lg bg-[#111827] border border-white/10 rounded-xl p-6 space-y-4 shadow-2xl">
+        <div class="flex items-center gap-3 border-b border-white/5 pb-3">
+            <span class="material-symbols-outlined text-[#D4AF37]">description</span>
+            <h3 class="text-sm font-bold text-white uppercase font-mono">Accounting Equation Matrix Specs</h3>
+        </div>
+        <div class="text-xs space-y-2 text-slate-400 max-h-48 overflow-y-auto custom-scrollbar pr-1">
+            <p><strong class="text-white font-mono">[01] CORE FORMULA</strong><br>The base execution validates that all staging states comply with standard liquidity metrics:</p>
+            <div class="p-2 bg-[#0b0f19] text-center font-mono text-white rounded my-1">Assets = Liabilities + Equity</div>
+            <p><strong class="text-white font-mono">[02] ANOMALY TRIPPING</strong><br>If variance calculations cross a $0 deviation baseline threshold, the local node locks system block consensus and generates an explicit security triage log.</p>
+        </div>
+        <button onclick="toggleUtilityModal('docsModal', false)" class="w-full py-2 bg-white/5 hover:bg-white/10 text-xs font-mono rounded border border-white/10 transition-all text-slate-300">
+            Dismiss Documentation
+        </button>
+    </div>
+</div>
+
+<script>
+    // System Seed Entries Configuration
+    const DefaultCorporateRegistrySeeds = {
+        "GLOBAL_CAPITAL_CORP": { assets: 12500000, liabilities: 8200000, equity: 4300000 },
+        "NEXUS_VENTURES":      { assets: 5100000,  liabilities: 1900000, equity: 3200000 },
+        "ALPHA_LOGISTICS":     { assets: 8900000,  liabilities: 6500000, equity: 2100000 } // Intentional Anomaly Default Variance
+    };
+
+    if (!localStorage.getItem("VaultRegistryStorage")) {
+        localStorage.setItem("VaultRegistryStorage", JSON.stringify(DefaultCorporateRegistrySeeds));
+    }
+
+    // Baseline Crypto Block Generation State Tracking Link array list items
+    let AuditBlockHistoryChain = JSON.parse(localStorage.getItem("AuditBlockHistoryChain")) || [
+        { id: "VAI-992-BX", timestamp: "2026-05-24 09:12:01", company: "GLOBAL_CAPITAL_CORP", docType: "Balance Sheet", status: "PASSED" },
+        { id: "VAI-104-ZA", timestamp: "2026-05-28 14:15:32", company: "ALPHA_LOGISTICS", docType: "Balance Sheet", status: "ANOMALY_DETECTED" }
+    ];
+
+    // Consolidated Single Core Event Initialization Loop
+    window.addEventListener('DOMContentLoaded', () => {
+        // Initialize App State
+        loadCompanyProfileData();
+        renderHistoricalRegistryTable();
+        appendSimulatedLogMessage("Core state management linked to localStorage successfully.");
+
+        // Safe Assignment for File Upload Handlers
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('forensicFileInput');
+        const promptText = document.getElementById('dropZonePrompt');
+
+        if (dropZone && fileInput) {
+            // Trigger file browser selector view window when clicking anywhere inside the dashed drop box
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Catch and show the uploaded file name when a user completes their file selection
+            // Catch, read, and audit the uploaded document file content dynamically
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                const uploadedFile = fileInput.files[0];
+                if (promptText) {
+                    promptText.innerHTML = `Selected File: <span class="text-[#D4AF37] font-mono font-bold">${uploadedFile.name}</span>`;
+                }
+
+                appendSimulatedLogMessage(`[PARSING_ENGINE] Reading inbound asset stream: ${uploadedFile.name}...`);
+
+                // Simulate processing time for AI OCR text extraction layer (800ms)
+                setTimeout(() => {
+                    let extractedAssets, extractedLiabilities, extractedEquity;
+                    const fileNameLower = uploadedFile.name.toLowerCase();
+
+                    // SMART AUTOMATED VERDICT DETECTOR BASED ON FILE TYPE / NAME
+                    // This simulates an AI scanning different corporate file formats
+                    if (fileNameLower.includes('anomaly') || fileNameLower.includes('risk') || fileNameLower.includes('test_fail')) {
+                        // Document contains broken matching variables (Intentional Anomaly)
+                        extractedAssets = 15000000;
+                        extractedLiabilities = 9500000;
+                        extractedEquity = 4000000; // 15,000,000 != 9,500,000 + 4,000,000 (Deficit of 1.5M!)
+                        appendSimulatedLogMessage(`[FORENSIC_AI_WARNING] Discrepancy detected during text extraction scanning sequence!`);
+                    } else if (fileNameLower.includes('nexus') || fileNameLower.includes('venture')) {
+                        extractedAssets = 5100000;
+                        extractedLiabilities = 1900000;
+                        extractedEquity = 3200000; // Balances perfectly!
+                        appendSimulatedLogMessage(`[PARSING_ENGINE] Extraction complete. Balanced identity structure found.`);
+                    } else {
+                        // Standard Clean Balanced Document Default Extraction
+                        extractedAssets = 12500000;
+                        extractedLiabilities = 8200000;
+                        extractedEquity = 4300000; // Balances perfectly!
+                        appendSimulatedLogMessage(`[PARSING_ENGINE] Extraction complete. Balanced identity structure found.`);
+                    }
+
+                    // 1. Force the extracted variables back into your interactive inputs automatically!
+                    document.getElementById("inputAssets").value = extractedAssets;
+                    document.getElementById("inputLiabilities").value = extractedLiabilities;
+                    document.getElementById("inputEquity").value = extractedEquity;
+
+                    // 2. Instantly update top dashboard summary display metric cards
+                    calculateDynamicSnapshots(extractedAssets, extractedLiabilities, extractedEquity);
+
+                    // 3. Highlight log console streams with the newly parsed properties
+                    appendSimulatedLogMessage(`[SYSTEM_AUDIT_SUCCESS] Auto-extracted Matrix values: Assets: $${extractedAssets.toLocaleString()} | Liabilities: $${extractedLiabilities.toLocaleString()} | Equity: $${extractedEquity.toLocaleString()}`);
+
+                    triggerSystemNotification("Document Content Successfully Audited & Staged!");
+                }, 800);
+            }
+        });
+            appendSimulatedLogMessage("Document upload bridge event handlers successfully linked.");
+        } else {
+            console.error("Layout initialization error: Drop zone or file input components missing from HTML layout markers.");
+        }
+    });
+
+    // Populate profile numbers inside control elements parameters row
+    function loadCompanyProfileData() {
+        const companyKey = document.getElementById("companySelect").value;
+        const currentDataPool = JSON.parse(localStorage.getItem("VaultRegistryStorage"));
+        const companyRecord = currentDataPool[companyKey] || { assets: 0, liabilities: 0, equity: 0 };
+
+        document.getElementById("inputAssets").value = companyRecord.assets;
+        document.getElementById("inputLiabilities").value = companyRecord.liabilities;
+        document.getElementById("inputEquity").value = companyRecord.equity;
+
+        calculateDynamicSnapshots(companyRecord.assets, companyRecord.liabilities, companyRecord.equity);
+    }
+
+    // Automated balance identity equation processing calculations matrix step
+    function calculateDynamicSnapshots(assets, liabilities, equity) {
+        document.getElementById("displayAssets").innerText = "$" + Number(assets).toLocaleString();
+        document.getElementById("displayLiabilities").innerText = "$" + Number(liabilities).toLocaleString();
+        document.getElementById("displayEquity").innerText = "$" + Number(equity).toLocaleString();
+
+        const varianceValue = Math.abs(Number(assets) - (Number(liabilities) + Number(equity)));
+        const globalBadge = document.getElementById("globalStateBadge");
+
+        if (varianceValue > 0) {
+            if (globalBadge) {
+                globalBadge.className = "text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-red-500/10 text-red-400 border-red-500/20";
+                globalBadge.innerText = "● Anomaly Identified";
+            }
+        } else {
+            if (globalBadge) {
+                globalBadge.className = "text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                globalBadge.innerText = "● System Steady";
+            }
+        }
+    }
+
+    // Persist new entry records into state system caches securely
+    function commitImmutableAuditRecord() {
+        const companyKey = document.getElementById("companySelect").value;
+        const selectedDocType = document.getElementById("docTypeSelect").value;
+
+        const aVal = Number(document.getElementById("inputAssets").value);
+        const lVal = Number(document.getElementById("inputLiabilities").value);
+        const eVal = Number(document.getElementById("inputEquity").value);
+
+        // Inject configuration back to corporate database indexes array map balances
+        const currentDataPool = JSON.parse(localStorage.getItem("VaultRegistryStorage"));
+        currentDataPool[companyKey] = { assets: aVal, liabilities: lVal, equity: eVal };
+        localStorage.setItem("VaultRegistryStorage", JSON.stringify(currentDataPool));
+
+        const derivedVerdict = (aVal === (lVal + eVal)) ? "PASSED" : "ANOMALY_DETECTED";
+
+        // Generate cryptographic unalterable ledger entry block
+        const newlyGeneratedBlock = {
+            id: "VAI-" + Math.floor(100 + Math.random() * 900) + "-TX",
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+            company: companyKey,
+            docType: selectedDocType,
+            status: derivedVerdict
+        };
+
+        AuditBlockHistoryChain.unshift(newlyGeneratedBlock);
+        localStorage.setItem("AuditBlockHistoryChain", JSON.stringify(AuditBlockHistoryChain));
+
+        calculateDynamicSnapshots(aVal, lVal, eVal);
+        renderHistoricalRegistryTable();
+        appendSimulatedLogMessage(`Committed secure block entry for ${companyKey} with parameters [Identity Status: ${derivedVerdict}]`);
+        triggerSystemNotification("Ledger State Securely Encrypted and Appended to Registry.");
+    }
+
+    function exportAuditLedgerToCSV() {
+    // 1. Pull the live chain from storage
+    const auditChain = JSON.parse(localStorage.getItem("AuditBlockHistoryChain")) || [];
+    const storagePool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
+
+    if (auditChain.length === 0) {
+        alert("The ledger is currently empty. Commit at least one audit block before exporting.");
+        return;
+    }
+
+    // 2. Define CSV Headers matching your Ledger Explorer Matrix
+    let csvContent = "Block ID,Timestamp,Company Profile,Document Category,Assets,Liabilities,Equity,Audit Verdict\n";
+
+    // 3. Loop through history and format rows safely
+    auditChain.forEach(block => {
+        const companyMetrics = storagePool[block.company] || { assets: 0, liabilities: 0, equity: 0 };
+
+        // Escape quotes just in case company names have commas
+        const companyName = `"${block.company.replace(/"/g, '""')}"`;
+        const docType = `"${block.docType.replace(/"/g, '""')}"`;
+
+        const row = [
+            `#${block.id}`,
+            `"${block.timestamp}"`,
+            companyName,
+            docType,
+            companyMetrics.assets,
+            companyMetrics.liabilities,
+            companyMetrics.equity,
+            block.status
+        ].join(",");
+
+        csvContent += row + "\n";
+    });
+
+    // 4. Create a hidden download anchor and trigger it
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    // Generate timestamped filename: e.g., vault_ledger_14-35-22.csv
+    const timeStamp = new Date().toLocaleTimeString().replace(/:/g, "-");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `vault_ledger_${timeStamp}.csv`);
+    link.style.visibility = 'hidden';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // 5. Fire a UI notification log if your terminal system is active
+    if (typeof appendSimulatedLogMessage === "function") {
+        appendSimulatedLogMessage(`[SYSTEM_EXPORT] Cryptographic chain compiled into CSV matrix structure successfully.`);
+    }
+}
+
+    // Process table loops interfaces row renders cleanly
+    function renderHistoricalRegistryTable() {
+        const tBody = document.getElementById("vaultTableBody");
+        if (!tBody) return;
+        tBody.innerHTML = "";
+
+        AuditBlockHistoryChain.forEach(block => {
+            const isTargetAnomaly = block.status === "ANOMALY_DETECTED";
+            const badgeContentStyle = isTargetAnomaly
+                ? `<span class="w-2 h-2 rounded-full bg-red-500 pulse-anomaly"></span><span class="font-bold text-red-400">ANOMALY_DETECTED</span>`
+                : `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="font-bold text-emerald-400">PASSED</span>`;
+
+            const trRow = document.createElement("tr");
+            trRow.className = "hover:bg-white/5 transition-colors border-b border-white/5";
+            trRow.innerHTML = `
+                <td class="p-4 font-mono text-slate-400">#${block.id}</td>
+                <td class="p-4 text-slate-400">${block.timestamp}</td>
+                <td class="p-4 font-bold text-white">${block.company}</td>
+                <td class="p-4"><span class="px-2 py-0.5 bg-white/5 rounded text-slate-300 text-[11px]">${block.docType}</span></td>
+                <td class="p-4"><div class="flex items-center gap-2">${badgeContentStyle}</div></td>
+                <td class="p-4 text-right">
+                    <button class="text-[#D4AF37] font-bold hover:underline inline-flex items-center gap-1" onclick="openForensicDrawer('${block.id}', '${block.company}', '${block.docType}', '${block.status}')">
+                        Analyze Report <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    </button>
+                </td>
+            `;
+            tBody.appendChild(trRow);
+        });
+    }
+
+    // Dynamic filtering capability logs matching target entry keywords
+    function filterRegistryTable() {
+        const queryText = document.getElementById("tableSearchInput").value.toUpperCase();
+        document.querySelectorAll("#vaultTableBody tr").forEach(rowElement => {
+            rowElement.style.display = rowElement.innerText.toUpperCase().includes(queryText) ? "" : "none";
+        });
+    }
+
+    // Appends structured status messages to system monitoring module console logs panel
+    function appendSimulatedLogMessage(textMsg) {
+        const consoleFeed = document.getElementById("processingStreamFeed");
+        if (!consoleFeed) return;
+        const curTime = new Date().toLocaleTimeString();
+        consoleFeed.innerHTML += `<div><span class="text-slate-600">[${curTime}]</span> <span class="text-slate-400">${textMsg}</span></div>`;
+        consoleFeed.scrollTop = consoleFeed.scrollHeight;
+    }
+
+    // System Alert notifications layout context utility functions
+    function triggerSystemNotification(msgText) {
+        const alertToast = document.getElementById("toastFeedbackNotification");
+        if (!alertToast) return;
+        document.getElementById("toastMessageNode").innerText = msgText;
+        alertToast.classList.remove("hidden");
+        setTimeout(() => alertToast.classList.add("hidden"), 3500);
+    }
+
+    // Interactive Forensic Module Dynamic Content Injector
+function openForensicDrawer(blockId, companyKey, docType, status) {
+    const drawer = document.getElementById("forensicDrawer");
+    if (!drawer) return;
+
+    // Pull financial asset values directly out of saved localStorage registry coordinates
+    const storagePool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
+    const companyRecord = storagePool[companyKey] || { assets: 0, liabilities: 0, equity: 0 };
+
+    // Calculate clear mathematical equations structure parameters matching entries
+    const assets = Number(companyRecord.assets);
+    const liabilities = Number(companyRecord.liabilities);
+    const equity = Number(companyRecord.equity);
+    const absoluteVariance = Math.abs(assets - (liabilities + equity));
+
+    // Map base data text content metrics onto visual UI targets
+    document.getElementById("drawerBlockId").innerText = "Audit Block Details: #" + blockId;
+    document.getElementById("drawerCompanyId").innerText = companyKey;
+    document.getElementById("drawerDocBadge").innerText = docType;
+    document.getElementById("drawerAssets").innerText = "$" + assets.toLocaleString();
+    document.getElementById("drawerLiabilities").innerText = "$" + liabilities.toLocaleString();
+    document.getElementById("drawerEquity").innerText = "$" + equity.toLocaleString();
+    document.getElementById("drawerVarianceText").innerText = "$" + absoluteVariance.toLocaleString();
+    document.getElementById("drawerTimestamp").innerText = "Generated: " + new Date().toISOString().slice(0,10) + " Distributed Ledger Core";
+
+    // Grab status contextual display badge targets
+    const vBadge = document.getElementById("drawerVerdictLabel");
+    const vBar = document.getElementById("drawerVarianceBar");
+    const recBox = document.getElementById("drawerRecommendationsBox");
+
+    if (status === "ANOMALY_DETECTED" || absoluteVariance > 0) {
+        // Style parameters for Anomaly Alert status conditions
+        vBadge.className = "text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20";
+        vBadge.innerText = "CRITICAL_ANOMALY";
+
+        vBar.className = "h-full bg-red-500 transition-all duration-500";
+        vBar.style.width = "100%";
+
+        recBox.className = "p-4 rounded-xl border border-red-500/10 bg-red-500/5 text-red-300 text-xs leading-relaxed space-y-2";
+        recBox.innerHTML = `
+            <div class="font-bold flex items-center gap-1.5 text-red-400 mb-1">
+                <span class="material-symbols-outlined text-sm">warning</span> Discrepancy Action Protocol Triggered
+            </div>
+            <p>The standard corporate asset formula is breaking down by an active variance of <span class="font-bold font-mono underline">${"$" + absoluteVariance.toLocaleString()}</span>.</p>
+            <ul class="list-disc pl-4 space-y-1 mt-2 text-slate-300">
+                <li>Verify ledger lines mapping inputs across corresponding transaction journals.</li>
+                <li>Initiate an automated lookup match verification audit against upstream counterparty asset matrices.</li>
+                <li>Halt immediate immutable block consolidation updates for this specific organizational target path.</li>
+            </ul>
+        `;
+    } else {
+        // Style parameters for Clean Passed status conditions
+        vBadge.className = "text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        vBadge.innerText = "PASSED_SECURE";
+
+        vBar.className = "h-full bg-emerald-500 transition-all duration-500";
+        vBar.style.width = "25%";
+
+        recBox.className = "p-4 rounded-xl border border-emerald-500/10 bg-emerald-500/5 text-slate-300 text-xs leading-relaxed space-y-2";
+        recBox.innerHTML = `
+            <div class="font-bold flex items-center gap-1.5 text-emerald-400 mb-1">
+                <span class="material-symbols-outlined text-sm">check_circle</span> Accounting Balance Confirmed
+            </div>
+            <p>Mathematical confirmation successful ($Assets = Liabilities + Equity$). The digital signature matches target structural criteria parameters exactly.</p>
+            <p class="text-slate-400 text-[11px] font-mono mt-1">No prescriptive remediation maneuvers or override actions are requested at this interval stage block sequence.</p>
+        `;
+    }
+
+    // Reveal the panel with a smooth entry state reveal un-hide layout choice
+    drawer.classList.remove("hidden");
+}
+
+function closeForensicDrawer() {
+    const drawer = document.getElementById("forensicDrawer");
+    if (drawer) drawer.classList.add("hidden");
+}
+
+    // Global toggle worker for secondary system utility popups
+function toggleUtilityModal(modalId, openState) {
+    const modalTarget = document.getElementById(modalId);
+    if (!modalTarget) return;
+
+    if (openState) {
+        modalTarget.classList.remove("hidden");
+    } else {
+        modalTarget.classList.add("hidden");
+    }
+}
+</script>
+</body>
+</html>

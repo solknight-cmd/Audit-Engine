@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | Risk Models</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans selection:bg-[#D4AF37]/30 selection:text-white">
+
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 pt-6 pb-4 bg-[#111827] border-r border-white/10 z-40">
+    <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
+                <div class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">CA</div>
+            </div>
+            <div class="overflow-hidden">
+                <div class="text-xs font-bold text-white truncate">Chief Auditor</div>
+                <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active Loop
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <div class="p-2 bg-[#D4AF37]/10 rounded border border-[#D4AF37]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white leading-tight">Forensic OS</div>
+            <div class="text-[11px] text-slate-500 font-mono tracking-wider">V.4.2.0-Stable</div>
+        </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="code.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Audit Desktop</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37] transition-all" href="analytics.html">
+            <span class="material-symbols-outlined">security</span>
+            <span class="text-sm font-medium">Risk Models</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="registry.html">
+            <span class="material-symbols-outlined">account_balance</span>
+            <span class="text-sm font-medium">Ledger Explorer</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="counterparty.html">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Counterparty Intelligence</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="systemhealth.html">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">System Health</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="ml-64 pt-2 min-h-screen p-6">
+    <div class="max-w-[1440px] mx-auto space-y-6">
+
+        <div class="flex justify-between items-end border-b border-white/5 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Predictive Risk Analytics Models</h1>
+                <p class="text-sm text-slate-400">Algorithmic evaluation of corporate systemic risk vectors and exposure limits.</p>
+            </div>
+            <div>
+                <select id="riskCompanySelect" onchange="calculateCorporateRiskTiers()" class="bg-[#111827] border border-white/10 rounded px-3 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-[#D4AF37]">
+                    <option value="GLOBAL_CAPITAL_CORP">GLOBAL_CAPITAL_CORP</option>
+                    <option value="NEXUS_VENTURES">NEXUS_VENTURES</option>
+                    <option value="ALPHA_LOGISTICS">ALPHA_LOGISTICS</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl relative overflow-hidden">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Debt-to-Asset Leverage Ratio</div>
+                <div id="riskLeverageRatio" class="text-3xl font-mono font-bold text-white mt-1">0.00</div>
+                <p class="text-[11px] text-slate-500 mt-2 font-mono">Target Threshold Matrix: &lt; 0.60 Safe</p>
+            </div>
+
+            <div class="bg-[#111827] p-6 border border-white/10 rounded-xl relative overflow-hidden">
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Financial Equity Multiplier</div>
+                <div id="riskEquityMultiplier" class="text-3xl font-mono font-bold text-white mt-1">0.00</div>
+                <p class="text-[11px] text-slate-500 mt-2 font-mono">Formula Matrix: Total Assets / Net Equity</p>
+            </div>
+
+            <div id="stressTestCard" class="p-6 rounded-xl border relative overflow-hidden transition-all duration-300">
+                <div class="text-xs font-semibold uppercase tracking-wider mb-2 text-slate-400">System Stress Test Verdict</div>
+                <div id="stressTestVerdict" class="text-xl font-bold mt-2 font-mono">CALCULATING...</div>
+                <p id="stressTestDesc" class="text-[11px] text-slate-400 mt-1">Evaluating live parameters pool...</p>
+            </div>
+
+        </div>
+
+        <section class="bg-[#111827] p-6 border border-white/10 rounded-xl space-y-4">
+            <h3 class="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#D4AF37]">shield_heart</span>
+                AI Core Financial Vulnerability Report
+            </h3>
+            <div class="p-4 bg-[#0b0f19] border border-white/5 rounded-xl space-y-2 text-xs leading-relaxed text-slate-300">
+                <div class="font-bold font-mono text-white text-xs mb-1 uppercase tracking-wide">Model Analysis Log</div>
+                <p id="riskAnalysisReportText">Staging risk calculation routines for the assigned target corporate structure...</p>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        calculateCorporateRiskTiers();
+    });
+
+    function calculateCorporateRiskTiers() {
+        const targetCompany = document.getElementById("riskCompanySelect").value;
+        const currentDataPool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
+
+        // Grab values from our synchronized local storage environment
+        const metrics = currentDataPool[targetCompany] || { assets: 0, liabilities: 0, equity: 0 };
+
+        const assets = Number(metrics.assets);
+        const liabilities = Number(metrics.liabilities);
+        const equity = Number(metrics.equity);
+
+        // Run baseline macro-prudential modeling calculations
+        const leverageRatio = assets > 0 ? (liabilities / assets) : 0;
+        const equityMultiplier = equity > 0 ? (assets / equity) : 0;
+        const structuralDiscrepancy = Math.abs(assets - (liabilities + equity));
+
+        // Inject calculations into display cards
+        document.getElementById("riskLeverageRatio").innerText = leverageRatio.toFixed(2);
+        document.getElementById("riskEquityMultiplier").innerText = equityMultiplier.toFixed(2);
+
+        const stressCard = document.getElementById("stressTestCard");
+        const stressVerdict = document.getElementById("stressTestVerdict");
+        const stressDesc = document.getElementById("stressTestDesc");
+        const reportText = document.getElementById("riskAnalysisReportText");
+
+        // EVALUATE RISK STATES MATRIX BASED ON LIVE RECONCILIATIONS
+        if (structuralDiscrepancy > 0) {
+            // State A: Critical Equation Break Anomaly Found
+            stressCard.className = "p-6 rounded-xl border bg-red-500/10 border-red-500/30 text-red-400";
+            stressVerdict.innerText = "CRITICAL_FAILED";
+            stressDesc.innerText = "Active accounting equation mismatch.";
+            reportText.innerHTML = `⚠️ <span class="text-red-400 font-bold font-mono uppercase">[SECURITY_ALERT]</span> This profile contains an active balance sheet equation deviation of <span class="font-bold underline font-mono text-white">$${structuralDiscrepancy.toLocaleString()}</span>. All automated calculations are blocked due to corrupted integrity variables. immediate manual intervention requested.`;
+        } else if (leverageRatio > 0.70) {
+            // State B: High Debt Burden Capital Leverage Risk
+            stressCard.className = "p-6 rounded-xl border bg-amber-500/10 border-amber-500/30 text-amber-400";
+            stressVerdict.innerText = "HIGH_EXPOSURE";
+            stressDesc.innerText = "Elevated asset leverage ratio detected.";
+            reportText.innerHTML = `🔸 <span class="text-amber-400 font-bold font-mono uppercase">[RISK_WARNING]</span> The organization's leverage ratio is sitting at <span class="font-bold font-mono text-white">${leverageRatio.toFixed(2)}</span>, crossing the safe baseline marker of 0.60. While the math balances, the corporate profile shows heavy operational debt stress dependency.`;
+        } else {
+            // State C: Fully Cleared and Stabilized Corporate Profile Structure
+            stressCard.className = "p-6 rounded-xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-400";
+            stressVerdict.innerText = "STABLE_PASS";
+            stressDesc.innerText = "Capital structure bounds look healthy.";
+            reportText.innerHTML = `🔹 <span class="text-emerald-400 font-bold font-mono uppercase">[METRIC_NORMAL]</span> Evaluation complete. Equity structures balance perfectly with liability totals. Leverage footprint is locked within acceptable safe performance metrics boundaries. No defensive exposure mitigations required.`;
+        }
+    }
+</script>
+
+</body>
+</html>
