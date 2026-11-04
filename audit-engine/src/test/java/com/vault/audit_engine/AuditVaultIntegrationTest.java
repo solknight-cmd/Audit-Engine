@@ -30,6 +30,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -63,7 +64,7 @@ class AuditVaultIntegrationTest {
 
     private static VaultUserDetails auditorAt(String tenantId) {
         return new VaultUserDetails("auditor@" + tenantId, "unused",
-                List.of(new SimpleGrantedAuthority("ROLE_AUDITOR")), tenantId, "Test Auditor");
+                List.of(new SimpleGrantedAuthority("ROLE_AUDITOR")), tenantId, "Company " + tenantId, "Test Auditor");
     }
 
     private static ModelAssessment passingAssessment(String assets, String liabilities, String equity) {
@@ -82,6 +83,7 @@ class AuditVaultIntegrationTest {
         // Endpoint must return an immediate HTTP 202 Accepted acknowledgement
         mockMvc.perform(post("/api/v1/audits/ingest")
                         .with(user(auditorAt(GLOBAL)))
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"documentType\":\"BALANCE_SHEET\",\"rawText\":\"" + rawText + "\"}"))
                 .andExpect(status().isAccepted());
@@ -111,7 +113,8 @@ class AuditVaultIntegrationTest {
 
         mockMvc.perform(multipart("/api/v1/audits/upload").file(image)
                         .param("documentType", "SCANNED_RECEIPT")
-                        .with(user(auditorAt(VANGUARD))))
+                        .with(user(auditorAt(VANGUARD)))
+                        .with(csrf()))
                 .andExpect(status().isAccepted());
 
         ArgumentCaptor<ExtractedDocument> sent = ArgumentCaptor.forClass(ExtractedDocument.class);
@@ -127,7 +130,8 @@ class AuditVaultIntegrationTest {
 
         mockMvc.perform(multipart("/api/v1/audits/upload").file(doc)
                         .param("documentType", "BALANCE_SHEET")
-                        .with(user(auditorAt(GLOBAL))))
+                        .with(user(auditorAt(GLOBAL)))
+                        .with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("Unsupported file format")));
     }
@@ -144,6 +148,23 @@ class AuditVaultIntegrationTest {
         mockMvc.perform(get("/api/v1/audits/vault").with(user(auditorAt(VANGUARD))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].companyId").value(VANGUARD));
+    }
+
+    @Test
+    void postWithoutCsrfTokenIsRejected() throws Exception {
+        mockMvc.perform(post("/api/v1/audits/ingest")
+                        .with(user(auditorAt(GLOBAL)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"documentType\":\"BALANCE_SHEET\",\"rawText\":\"Assets 1\"}"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void meReturnsTheLoggedInUsersCompany() throws Exception {
+        mockMvc.perform(get("/api/v1/me").with(user(auditorAt(VANGUARD))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.companyId").value(VANGUARD))
+                .andExpect(jsonPath("$.companyName").value("Company " + VANGUARD));
     }
 
     @Test

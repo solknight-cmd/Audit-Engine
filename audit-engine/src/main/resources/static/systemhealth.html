@@ -5,6 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Vault Audit Intelligence | System Health</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="/js/vault-api.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
         .material-symbols-outlined {
@@ -19,12 +20,12 @@
     <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
-                <div class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">CA</div>
+                <div id="currentUserInitials" class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">--</div>
             </div>
             <div class="overflow-hidden">
-                <div class="text-xs font-bold text-white truncate">Chief Auditor</div>
+                <div id="currentUserName" class="text-xs font-bold text-white truncate">Loading…</div>
                 <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
-                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> Active Loop
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> <span id="currentCompanyName" class="truncate">--</span>
                 </div>
             </div>
         </div>
@@ -62,6 +63,12 @@
             <span class="text-sm font-medium">System Health</span>
         </a>
     </nav>
+
+    <div class="px-6 mt-auto">
+        <a class="flex items-center gap-2 px-6 py-2 text-xs text-slate-400 hover:text-red-400 transition-all" href="javascript:void(0)" onclick="VaultApi.logout()">
+            <span class="material-symbols-outlined text-sm">logout</span> Sign Out
+        </a>
+    </div>
 </aside>
 
 <main class="ml-64 pt-2 min-h-screen p-6">
@@ -70,12 +77,10 @@
         <div class="flex justify-between items-end border-b border-white/5 pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-white tracking-tight">System Core Operational Diagnostics</h1>
-                <p class="text-sm text-slate-400">Monitor background database engine clusters, extraction pipeline latencies, and transaction capacities.</p>
+                <p class="text-sm text-slate-400">Live state of your company's vault and audit pipeline.</p>
             </div>
             <div>
-                <button onclick="clearSystemCaches()" class="text-[10px] uppercase font-mono font-bold tracking-wider px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded hover:bg-red-500/20 transition-all">
-                    Reset App Storage
-                </button>
+                <span id="apiStatusBadge" class="text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-slate-500/10 text-slate-400 border-slate-500/20">Checking…</span>
             </div>
         </div>
 
@@ -83,28 +88,10 @@
 
             <div class="bg-[#111827] p-6 border border-white/10 rounded-xl space-y-4">
                 <h3 class="text-xs font-bold font-mono text-[#D4AF37] uppercase tracking-wider flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">dns</span> Database Performance Cluster
+                    <span class="material-symbols-outlined text-sm">dns</span> Vault Verdict Breakdown
                 </h3>
-
-                <div class="space-y-3 text-xs font-mono">
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-slate-400">LocalStorage Registry Utilization</span>
-                            <span class="text-white font-bold">14.2 KB / 5.0 MB</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-gradient-to-r from-[#D4AF37] to-[#bfa032] h-full" style="width: 5%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-slate-400">Ledger Index Search Latency</span>
-                            <span class="text-emerald-400 font-bold">12ms (OPTIMAL)</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-emerald-500 h-full" style="width: 15%"></div>
-                        </div>
-                    </div>
+                <div id="verdictBreakdown" class="space-y-3 text-xs font-mono">
+                    <p class="text-slate-500">Loading…</p>
                 </div>
             </div>
 
@@ -112,26 +99,12 @@
                 <h3 class="text-xs font-bold font-mono text-[#D4AF37] uppercase tracking-wider flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">memory</span> AI Forensic Parsing Pipeline
                 </h3>
-
                 <div class="space-y-3 text-xs font-mono">
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-slate-400">File Ingestion Thread Status</span>
-                            <span id="pipelineStatusText" class="text-emerald-400 font-bold">STABLE_IDLE</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div id="pipelineStatusBar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 20%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-slate-400">Staged Block History Queue</span>
-                            <span id="blockQueueText" class="text-white font-bold">0 Active Blocks</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div id="blockQueueBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                    </div>
+                    <div class="flex justify-between"><span class="text-slate-400">API response time</span><span id="apiLatency" class="text-white font-bold">--</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Live log stream</span><span id="pipelineStatusText" class="text-slate-400 font-bold">CONNECTING…</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Records in vault</span><span id="blockQueueText" class="text-white font-bold">--</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Last audit</span><span id="lastAuditText" class="text-white font-bold">--</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Audits with unverified figures</span><span id="unverifiedText" class="text-white font-bold">--</span></div>
                 </div>
             </div>
 
@@ -139,7 +112,7 @@
 
         <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
             <div class="p-4 bg-[#0b0f19]/50 border-b border-white/5 font-mono text-[11px] text-[#D4AF37] tracking-wider uppercase font-bold">
-                Diagnostics Core Stream Logs
+                Live Pipeline Log (this session)
             </div>
             <div id="healthDiagnosticConsole" class="p-4 h-64 overflow-y-auto bg-[#060913] font-mono text-xs text-slate-400 space-y-1 custom-scrollbar">
             </div>
@@ -150,63 +123,69 @@
 
 <script>
     window.addEventListener('DOMContentLoaded', () => {
+        VaultApi.showCurrentUser();
         evaluateOperationalHealthMetrics();
+        connectPipelineLog();
     });
 
-    function evaluateOperationalHealthMetrics() {
-        const consoleLog = document.getElementById("healthDiagnosticConsole");
-        if (!consoleLog) return;
-
-        const auditChain = JSON.parse(localStorage.getItem("AuditBlockHistoryChain")) || [];
-        const currentDataPool = JSON.parse(localStorage.getItem("VaultRegistryStorage")) || {};
-
-        const timeString = new Date().toLocaleTimeString();
-        consoleLog.innerHTML = `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-blue-400">[KERNEL]</span> Bootstrapping diagnostics loop sequences...</div>`;
-
-        // Check for active accounting mismatch anomalies inside data pool
-        let anomaliesFound = false;
-        Object.keys(currentDataPool).forEach(key => {
-            const record = currentDataPool[key];
-            if (Math.abs(Number(record.assets) - (Number(record.liabilities) + Number(record.equity))) > 0) {
-                anomaliesFound = true;
-            }
-        });
-
-        // Track committed entries count
-        const blockCount = auditChain.length;
-        document.getElementById("blockQueueText").innerText = `${blockCount} Committed Blocks`;
-
-        // Dynamic resizing bar gauge logic
-        const targetPercentage = Math.min(blockCount * 25, 100);
-        document.getElementById("blockQueueBar").style.width = targetPercentage + "%";
-
-        // Adjust telemetry components based on global storage conditions
-        if (anomaliesFound) {
-            document.getElementById("pipelineStatusText").innerText = "ISOLATION_WARN";
-            document.getElementById("pipelineStatusText").className = "text-red-400 font-bold";
-            document.getElementById("pipelineStatusBar").className = "bg-red-500 h-full transition-all duration-300";
-            document.getElementById("pipelineStatusBar").style.width = "100%";
-
-            consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-red-400">[CORE_ALERT]</span> Pipeline anomaly state isolation triggered. Sub-thread indices mismatched.</div>`;
-            consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-slate-500">[SYSTEM]</span> Dynamic analytical metrics routing online.</div>`;
-        } else {
-            document.getElementById("pipelineStatusText").innerText = "STABLE_IDLE";
-            document.getElementById("pipelineStatusText").className = "text-emerald-400 font-bold";
-            document.getElementById("pipelineStatusBar").className = "bg-emerald-500 h-full transition-all duration-300";
-            document.getElementById("pipelineStatusBar").style.width = "20%";
-
-            consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-emerald-400">[HEALTH_OK]</span> Thread worker clusters synchronized safely.</div>`;
+    async function evaluateOperationalHealthMetrics() {
+        const badge = document.getElementById("apiStatusBadge");
+        const started = performance.now();
+        let records;
+        try {
+            records = await VaultApi.vault();
+        } catch (e) {
+            badge.className = "text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-red-500/10 text-red-400 border-red-500/20";
+            badge.textContent = "● API unreachable";
+            logLine(`Could not reach the API: ${e.message}`, "text-red-400");
+            return;
         }
+        const latency = Math.round(performance.now() - started);
+        badge.className = "text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+        badge.textContent = "● API online";
+        document.getElementById("apiLatency").textContent = `${latency} ms`;
+        document.getElementById("blockQueueText").textContent = `${records.length}`;
+        document.getElementById("lastAuditText").textContent = records.length ? VaultApi.formatDate(records[0].vaultedAt) : "None yet";
+        const unverified = records.filter(r => {
+            const report = VaultApi.report(r);
+            return report && report.unverifiedFigures && report.unverifiedFigures.length > 0;
+        }).length;
+        document.getElementById("unverifiedText").textContent = `${unverified}`;
 
-        consoleLog.innerHTML += `<div><span class="text-slate-600">[${timeString}]</span> <span class="text-slate-400">[STORAGE]</span> Shared matrix block map resolved with ${blockCount} structural references.</div>`;
+        // Share of vault records per verdict
+        const statuses = ["PASSED", "HIGH_LEVERAGE_RISK", "ANOMALY_DETECTED", "UNABLE_TO_VERIFY"];
+        const total = records.length || 1;
+        document.getElementById("verdictBreakdown").innerHTML = statuses.map(status => {
+            const count = records.filter(r => r.auditStatus === status).length;
+            const style = VaultApi.statusStyle(status);
+            return `<div>
+                <div class="flex justify-between mb-1"><span class="text-slate-400">${style.label}</span><span class="${style.text} font-bold">${count}</span></div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div class="${style.dot.replace('pulse-anomaly', '')} h-full" style="width: ${Math.round(count / total * 100)}%"></div>
+                </div>
+            </div>`;
+        }).join('');
     }
 
-    function clearSystemCaches() {
-        if (confirm("Are you absolutely sure you want to clear your global cache registries? This will purge all added blockchain historical blocks and revert company records to structural seeds.")) {
-            localStorage.clear();
-            alert("Local storage wiped clean. Refreshing interface...");
-            window.location.reload();
-        }
+    function connectPipelineLog() {
+        const statusText = document.getElementById("pipelineStatusText");
+        const source = VaultApi.stream(entry => logLine(entry.message, "text-slate-400", entry.time));
+        source.onopen = () => { statusText.textContent = "CONNECTED"; statusText.className = "text-emerald-400 font-bold"; };
+        source.onerror = () => { statusText.textContent = "RECONNECTING…"; statusText.className = "text-amber-400 font-bold"; };
+    }
+
+    function logLine(message, colourClass, time = null) {
+        const consoleLog = document.getElementById("healthDiagnosticConsole");
+        const line = document.createElement("div");
+        const stamp = document.createElement("span");
+        stamp.className = "text-slate-600";
+        stamp.textContent = time || `[${new Date().toLocaleTimeString()}]`;
+        const text = document.createElement("span");
+        text.className = colourClass;
+        text.textContent = " " + message;
+        line.append(stamp, text);
+        consoleLog.appendChild(line);
+        consoleLog.scrollTop = consoleLog.scrollHeight;
     }
 </script>
 

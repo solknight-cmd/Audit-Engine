@@ -9,6 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 @Configuration
@@ -30,10 +33,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // TODO: re-enable CSRF once the dashboard calls the API (it needs to send the token).
-                // Until then, the SameSite=Lax session cookie (application.properties) blocks
-                // cross-site form posts.
-                .csrf(csrf -> csrf.disable())
+                // CSRF token in a readable XSRF-TOKEN cookie. Pages send it back as the X-XSRF-TOKEN
+                // header (fetch) or the _csrf field (login form); another site can't read the cookie.
+                // The plain handler accepts the cookie value as-is, which static pages need.
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                )
+                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         // Public: marketing site, login page and static assets. Dashboards and the API need a login.
                         .requestMatchers(

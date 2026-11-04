@@ -32,6 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getPassword(), // Hashed BCrypt text token from DB
                 List.of(new SimpleGrantedAuthority(user.getRole())),
                 user.getTenant().getTenantId(),
+                user.getTenant().getCompanyName(),
                 user.getFullName()
         );
     }
