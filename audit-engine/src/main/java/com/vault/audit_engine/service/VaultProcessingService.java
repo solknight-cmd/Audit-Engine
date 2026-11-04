@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,15 +42,15 @@ public class VaultProcessingService {
         logger.info("Starting background AI audit for Company: {} | Type: {}", companyId, documentType);
 
         // SSE LOG: Engine startup milestone
-        sseLogService.log("INIT: HEURISTIC_ENGINE_LAUNCHED for Entity: " + companyId);
+        sseLogService.log(companyId, "INIT: HEURISTIC_ENGINE_LAUNCHED for Entity: " + companyId);
 
         try {
             // SSE LOG: Sending out text
-            sseLogService.log("FORWARDING: Transmitting statement string matrices to Groq API socket...");
+            sseLogService.log(companyId, "FORWARDING: Transmitting statement string matrices to Groq API socket...");
             String aiResponseRaw = aiAuditService.evaluateStatement(rawText, documentType);
 
             // SSE LOG: Text received back from Groq
-            sseLogService.log("PARSING: Verification text payloads successfully returned from decision model.");
+            sseLogService.log(companyId, "PARSING: Verification text payloads successfully returned from decision model.");
 
             String auditStatus = "ANOMALY_DETECTED"; // Conservative fallback
             try {
@@ -61,7 +60,7 @@ public class VaultProcessingService {
                 }
             } catch (Exception parseEx) {
                 logger.error("AI responded with invalid JSON structural format, defaulting status to anomaly.", parseEx);
-                sseLogService.log("WARN: AI returned unstructured data format layout. Fallback defaults applied.");
+                sseLogService.log(companyId, "WARN: AI returned unstructured data format layout. Fallback defaults applied.");
             }
 
             AuditRecord record = new AuditRecord(companyId, documentType, rawText, aiResponseRaw, auditStatus);
@@ -71,28 +70,28 @@ public class VaultProcessingService {
             logger.info("Successfully vaulted financial audit report for Company: {}. Status: {}", companyId, auditStatus);
 
             // SSE LOG: Success state archived
-            sseLogService.log("SECURE: Immutable forensic ledger records safely archived in active Vault. VERDICT: " + auditStatus);
+            sseLogService.log(companyId, "SECURE: Immutable forensic ledger records safely archived in active Vault. VERDICT: " + auditStatus);
 
         } catch (Exception ex) {
             logger.error("CRITICAL PIPELINE FAILURE for Company: " + companyId + " | Reason: " + ex.getMessage(), ex);
             // SSE LOG: Catching connection or processing errors
-            sseLogService.log("CRITICAL ERROR: Pipeline execution exception trapped. Reason: " + ex.getMessage());
+            sseLogService.log(companyId, "CRITICAL ERROR: Pipeline execution exception trapped. Reason: " + ex.getMessage());
         }
     }
 
     @Async
-    public void processAndVaultFile(String companyId, String documentType, MultipartFile file, String extractedText) {
-        logger.info("Starting background multimodal document audit for Company: {} | File: {}", companyId, file.getOriginalFilename());
+    public void processAndVaultFile(String companyId, String documentType, String originalFilename, String extractedText) {
+        logger.info("Starting background multimodal document audit for Company: {} | File: {}", companyId, originalFilename);
 
         // SSE LOG: Engine file processing startup milestone
-        sseLogService.log("INIT: MULTIMODAL_ENGINE_LAUNCHED for File: " + file.getOriginalFilename());
+        sseLogService.log(companyId, "INIT: MULTIMODAL_ENGINE_LAUNCHED for File: " + originalFilename);
 
         try {
             String aiResponseRaw = "";
-            String filename = file.getOriginalFilename().toLowerCase();
+            String filename = originalFilename.toLowerCase();
 
             // SSE LOG: Signpost indicating OCR step completed and text is sending out
-            sseLogService.log("PARSING: Text extraction completed. Transmitting string arrays to Groq connection pool...");
+            sseLogService.log(companyId, "PARSING: Text extraction completed. Transmitting string arrays to Groq connection pool...");
 
             if (filename.endsWith(".pdf") || filename.endsWith(".png") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
                 aiResponseRaw = aiAuditService.evaluateStatementDirect(
@@ -105,7 +104,7 @@ public class VaultProcessingService {
             }
 
             // SSE LOG: Text received back from Groq
-            sseLogService.log("SUCCESS: Response frames securely generated from AI decision logic engine.");
+            sseLogService.log(companyId, "SUCCESS: Response frames securely generated from AI decision logic engine.");
 
             String auditStatus = "ANOMALY_DETECTED";
             try {
@@ -115,7 +114,7 @@ public class VaultProcessingService {
                 }
             } catch (Exception parseEx) {
                 logger.error("Failed to parse automated audit response JSON template schema.", parseEx);
-                sseLogService.log("WARN: Failed to unpack response JSON schema format layers.");
+                sseLogService.log(companyId, "WARN: Failed to unpack response JSON schema format layers.");
             }
 
             String uiCompatibleReport = aiResponseRaw;
@@ -136,17 +135,16 @@ public class VaultProcessingService {
             logger.info("Successfully completed multi-format document vaulting loop for company: {}", companyId);
 
             // SSE LOG: Finished everything safely
-            sseLogService.log("SECURE: Immutable forensic ledger records safely archived in active Vault. VERDICT: " + auditStatus);
+            sseLogService.log(companyId, "SECURE: Immutable forensic ledger records safely archived in active Vault. VERDICT: " + auditStatus);
 
         } catch (Exception ex) {
             logger.error("CRITICAL FILE PIPELINE EXCEPTION for Company: " + companyId + " | " + ex.getMessage(), ex);
             // SSE LOG: Error catcher
-            sseLogService.log("CRITICAL ERROR: Multimodal file pipeline processing failure: " + ex.getMessage());
+            sseLogService.log(companyId, "CRITICAL ERROR: Multimodal file pipeline processing failure: " + ex.getMessage());
         }
     }
 
-    // Paste this inside your VaultProcessingService class body:
-    public List<AuditRecord> getCompleteVaultLedger() {
-        return auditRecordRepository.findAll();
+    public List<AuditRecord> getVaultLedger(String companyId) {
+        return auditRecordRepository.findByCompanyIdOrderByVaultedAtDesc(companyId);
     }
 }
