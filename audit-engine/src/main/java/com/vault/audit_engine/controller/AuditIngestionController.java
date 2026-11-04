@@ -2,7 +2,9 @@ package com.vault.audit_engine.controller;
 
 import com.vault.audit_engine.config.VaultUserDetails;
 import com.vault.audit_engine.model.AuditRecord;
+import com.vault.audit_engine.model.ExtractedDocument;
 import com.vault.audit_engine.service.DocumentExtractionService;
+import com.vault.audit_engine.service.DocumentRejectedException;
 import com.vault.audit_engine.service.VaultProcessingService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 // Every endpoint works on the caller's own tenant, taken from their login, never from the request.
 @RestController
@@ -39,7 +42,8 @@ public class AuditIngestionController {
                                   @Valid @RequestBody IngestionRequest request) {
 
         // Push processing off to a background thread instantly
-        processingService.processAndVault(user.getTenantId(), request.documentType(), request.rawText());
+        processingService.process(user.getTenantId(), request.documentType(),
+                extractionService.fromText(request.rawText()));
 
         // Immediate acknowledgment back to the enterprise client application
         return "Financial statement received successfully. Audit processing has been queued in the background.";
@@ -52,15 +56,9 @@ public class AuditIngestionController {
             @RequestParam("documentType") String documentType,
             @RequestParam("file") MultipartFile file) {
 
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("Uploaded file cannot be empty.");
-        }
-
-        // 1. Extract structural text out of supported files
-        String rawText = extractionService.extractText(file);
-
-        // 2. Hand off only the filename and text: the uploaded file is deleted once this request ends
-        processingService.processAndVaultFile(user.getTenantId(), documentType, file.getOriginalFilename(), rawText);
+        // Extract here, while the upload still exists: it is deleted once this request ends
+        ExtractedDocument document = extractionService.extract(file);
+        processingService.process(user.getTenantId(), documentType, document);
 
         return "File uploaded successfully. Financial audit processing pipeline has been queued.";
     }
@@ -68,5 +66,11 @@ public class AuditIngestionController {
     @GetMapping("/vault")
     public List<AuditRecord> getVaultRecords(@AuthenticationPrincipal VaultUserDetails user) {
         return processingService.getVaultLedger(user.getTenantId());
+    }
+
+    @ExceptionHandler(DocumentRejectedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleRejectedDocument(DocumentRejectedException e) {
+        return Map.of("error", e.getMessage());
     }
 }
