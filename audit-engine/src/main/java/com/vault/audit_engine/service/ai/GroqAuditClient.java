@@ -83,7 +83,8 @@ public class GroqAuditClient implements AuditModelClient {
     private Object userContent(String documentType, ExtractedDocument document) {
         StringBuilder header = new StringBuilder()
                 .append("Document type: ").append(documentType).append('\n')
-                .append("File: ").append(document.sourceName()).append('\n');
+                .append("File: ").append(document.sourceName()).append('\n')
+                .append(AuditModelClient.amountInstructions(documentType));
         if (document.truncated()) {
             header.append("Note: the document was cut short to fit size limits; mention this if it affects the review.\n");
         }

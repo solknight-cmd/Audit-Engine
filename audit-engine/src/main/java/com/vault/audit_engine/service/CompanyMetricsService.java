@@ -2,6 +2,7 @@ package com.vault.audit_engine.service;
 
 import com.vault.audit_engine.model.AuditCompletedEvent;
 import com.vault.audit_engine.model.CompanyMetrics;
+import com.vault.audit_engine.model.DocumentType;
 import com.vault.audit_engine.model.StatementFigures;
 import com.vault.audit_engine.repository.AuditRecordRepository;
 import com.vault.audit_engine.repository.CompanyMetricsRepository;
@@ -38,10 +39,13 @@ public class CompanyMetricsService {
         metrics.setTotalAuditsProcessed((int) auditRecordRepository.countByCompanyId(event.companyId()));
         metrics.setLastUpdated(LocalDateTime.now());
 
-        StatementFigures figures = event.figures();
-        metrics.setTotalAssets(formatAmount(figures.totalAssets(), figures));
-        metrics.setTotalLiabilities(formatAmount(figures.totalLiabilities(), figures));
-        metrics.setNetEquity(formatAmount(figures.totalEquity(), figures));
+        // The headline cards show the latest balance sheet; other statements don't have these totals
+        if (event.documentType() == DocumentType.BALANCE_SHEET) {
+            StatementFigures figures = event.figures();
+            metrics.setTotalAssets(formatAmount(figures.amount("total_assets"), figures));
+            metrics.setTotalLiabilities(formatAmount(figures.amount("total_liabilities"), figures));
+            metrics.setNetEquity(formatAmount(figures.amount("total_equity"), figures));
+        }
         metrics.setLastAuditStatus(event.auditStatus());
 
         metricsRepository.save(metrics);

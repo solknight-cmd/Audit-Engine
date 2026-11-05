@@ -160,7 +160,7 @@
             const report = VaultApi.report(record);
             const figures = (report && report.figures) || {};
             const metricsString = report
-                ? `A: ${VaultApi.formatAmount(figures.total_assets, figures)} | L: ${VaultApi.formatAmount(figures.total_liabilities, figures)} | E: ${VaultApi.formatAmount(figures.total_equity, figures)}`
+                ? (VaultApi.amounts(report).map(a => `${a.label}: ${VaultApi.formatAmount(a.value, figures)}`).join(' | ') || 'No standard figures')
                 : "No structured report";
 
             const row = document.createElement("tr");

@@ -62,7 +62,10 @@
         <div>
             <div class="flex justify-between items-center mb-2">
                 <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-gold">Password</label>
-                <a href="#" class="text-[10px] uppercase tracking-wider text-slate-400 hover:text-gold transition-colors">Forgot?</a>
+                <!-- No self-service reset yet: requests go to the team, who reset the password by hand -->
+                <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20password%20reset&amp;body=Please%20reset%20the%20password%20for%20my%20Vault%20Core%20account%3A%20"
+                   title="Email the Vault Core team to reset your password"
+                   class="text-[10px] uppercase tracking-wider text-slate-400 hover:text-gold transition-colors">Forgot?</a>
             </div>
             <input
                     type="password"

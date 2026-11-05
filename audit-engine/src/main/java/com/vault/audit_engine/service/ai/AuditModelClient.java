@@ -1,5 +1,6 @@
 package com.vault.audit_engine.service.ai;
 
+import com.vault.audit_engine.model.DocumentType;
 import com.vault.audit_engine.model.ExtractedDocument;
 import com.vault.audit_engine.model.ModelAssessment;
 
@@ -23,9 +24,7 @@ public interface AuditModelClient {
             Return only a JSON object with exactly these fields:
             {
               "figures": {
-                "total_assets": number or null,
-                "total_liabilities": number or null,
-                "total_equity": number or null,
+                "amounts": { the amounts listed in the user message, each a number or null },
                 "currency": ISO 4217 code or null,
                 "period": reporting date or period as written, or null,
                 "scale": "units", "thousands", "millions", "billions" or null
@@ -34,16 +33,26 @@ public interface AuditModelClient {
               "findings": [ { "severity": "HIGH" or "MEDIUM" or "LOW", "description": string } ]
             }
 
-            Rules for figures:
+            Rules for amounts:
+            - Report exactly the amounts the user message asks for, for the most recent period shown.
             - Copy each number exactly as printed. Do not apply the scale, do not round, and do not
               calculate a figure that is not printed. Use null when the document does not state it.
-            - Numbers in parentheses are negative.
-            - total_equity is total shareholders' or owners' equity, not "total liabilities and equity".
+            - Numbers in parentheses or with a minus sign are negative.
 
             Rules for findings:
-            - Check internal consistency (subtotals add up, Assets = Liabilities + Equity), and look for
-              unusual items, missing standard line items and presentation problems.
+            - Check internal consistency (subtotals and totals add up), and look for unusual items,
+              missing standard line items and presentation problems.
             - Each finding must point to something specific in the document.
             - If nothing is wrong, return an empty findings list and status PASSED.
             """;
+
+    /** The part of the user message that says which amounts to read for this kind of document. */
+    static String amountInstructions(String documentType) {
+        DocumentType type = DocumentType.from(documentType);
+        if (type.amountFields().isEmpty()) {
+            return "This document type has no standard amounts to report; return an empty amounts object.\n";
+        }
+        return "Report these amounts in figures.amounts: " + String.join(", ", type.amountFields()) + ".\n"
+                + type.guidance() + "\n";
+    }
 }

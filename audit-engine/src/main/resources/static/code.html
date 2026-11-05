@@ -106,7 +106,7 @@
         <div class="flex justify-between items-end border-b border-white/5 pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-white tracking-tight">Dynamic Corporate Standing Snapshot</h1>
-                <p id="snapshotSubtitle" class="text-sm text-slate-400">Figures from your most recent verified audit.</p>
+                <p id="snapshotSubtitle" class="text-sm text-slate-400">Totals from your most recent balance sheet.</p>
             </div>
             <div>
                 <span id="globalStateBadge" class="text-xs px-3 py-1 rounded-full font-mono font-bold uppercase tracking-wider border bg-slate-500/10 text-slate-400 border-slate-500/20">Loading…</span>
@@ -287,27 +287,15 @@
                 </div>
 
                 <div class="space-y-3">
-                    <label class="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-semibold block">Audit Snapshot Values</label>
-                    <div class="grid grid-cols-3 gap-2 text-center font-mono">
-                        <div class="p-3 bg-white/5 rounded-lg border border-white/5">
-                            <div class="text-[10px] text-slate-400 uppercase">Assets</div>
-                            <div id="drawerAssets" class="text-xs font-bold text-white mt-1">--</div>
-                        </div>
-                        <div class="p-3 bg-white/5 rounded-lg border border-white/5">
-                            <div class="text-[10px] text-slate-400 uppercase">Liabilities</div>
-                            <div id="drawerLiabilities" class="text-xs font-bold text-white mt-1">--</div>
-                        </div>
-                        <div class="p-3 bg-white/5 rounded-lg border border-white/5">
-                            <div class="text-[10px] text-slate-400 uppercase">Equity</div>
-                            <div id="drawerEquity" class="text-xs font-bold text-white mt-1">--</div>
-                        </div>
-                    </div>
+                    <label class="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-semibold block">Figures Read From the Document</label>
+                    <!-- Filled per document type: balance sheet totals, income statement profits, cash flows, ... -->
+                    <div id="drawerAmounts" class="grid grid-cols-2 gap-2 font-mono"></div>
                     <p id="drawerFigureNote" class="text-[10px] text-slate-500 font-mono"></p>
                 </div>
 
                 <div class="p-5 bg-gradient-to-b from-[#161f30] to-[#111827] border border-white/10 rounded-xl space-y-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-white">Equation Variance Meter</span>
+                        <span class="text-xs font-bold text-white">Arithmetic Checks</span>
                         <span id="drawerVerdictLabel" class="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded">--</span>
                     </div>
 
@@ -315,12 +303,9 @@
                         <div id="drawerVarianceBar" class="h-full w-0 transition-all duration-500"></div>
                     </div>
 
-                    <div class="flex justify-between items-center text-[11px] font-mono">
-                        <span class="text-slate-400">Assets − (Liabilities + Equity):</span>
-                        <span id="drawerVarianceText" class="font-bold text-white">--</span>
-                    </div>
-                    <div class="flex justify-between items-center text-[11px] font-mono">
-                        <span class="text-slate-400">Arithmetic check / AI opinion:</span>
+                    <ul id="drawerCheckList" class="space-y-1.5 text-[11px] font-mono"></ul>
+                    <div class="flex justify-between items-center text-[11px] font-mono border-t border-white/5 pt-2">
+                        <span class="text-slate-400">Arithmetic checks / AI opinion:</span>
                         <span id="drawerChecks" class="text-slate-300">--</span>
                     </div>
                 </div>
@@ -397,14 +382,19 @@
             <h3 class="text-sm font-bold text-white uppercase font-mono">How Verdicts Are Decided</h3>
         </div>
         <div class="text-xs space-y-2 text-slate-400 max-h-64 overflow-y-auto custom-scrollbar pr-1">
-            <p><strong class="text-white font-mono">[01] CORE FORMULA</strong><br>Every balance sheet is checked against:</p>
-            <div class="p-2 bg-[#0b0f19] text-center font-mono text-white rounded my-1">Assets = Liabilities + Equity</div>
-            <p><strong class="text-white font-mono">[02] FIGURES MUST BE IN THE DOCUMENT</strong><br>The AI model reads the totals, and the server only uses a figure if that number is actually printed in the document. Anything else is reported as unverified, and the audit can't pass.</p>
+            <p><strong class="text-white font-mono">[01] CHECKS BY DOCUMENT TYPE</strong><br>Pick the right Document Category: it decides which arithmetic the server checks.</p>
+            <div class="p-2 bg-[#0b0f19] font-mono text-white rounded my-1 space-y-1 text-[11px]">
+                <div><span class="text-slate-400">Balance sheet:</span> Assets = Liabilities + Equity</div>
+                <div><span class="text-slate-400">Income statement:</span> Revenue − Cost of sales = Gross profit; Profit before tax − Tax = Net profit</div>
+                <div><span class="text-slate-400">Cash flow:</span> Opening + Net change = Closing cash; Operating + Investing + Financing = Net change</div>
+                <div><span class="text-slate-400">Trial balance:</span> Total debits = Total credits</div>
+            </div>
+            <p><strong class="text-white font-mono">[02] FIGURES MUST BE IN THE DOCUMENT</strong><br>The AI model reads the figures, and the server only uses a figure if that number is actually printed in the document. Anything else is reported as unverified, and a check that needs it doesn't run. Small differences from rounding are allowed.</p>
             <p><strong class="text-white font-mono">[03] VERDICTS</strong><br>
-                <span class="text-emerald-400">Passed</span>: the equation balances and the AI found no serious issue.
-                <span class="text-amber-400">High leverage</span>: liabilities exceed 80% of assets.
-                <span class="text-red-400">Anomaly detected</span>: the equation doesn't balance, or the AI flagged a serious issue.
-                <span class="text-slate-300">Unable to verify</span>: the totals couldn't be read or confirmed.</p>
+                <span class="text-emerald-400">Passed</span>: every check that could run passed and the AI found no serious issue.
+                <span class="text-amber-400">High leverage</span>: on a balance sheet, liabilities exceed 80% of assets.
+                <span class="text-red-400">Anomaly detected</span>: a check failed, or the AI flagged a serious issue.
+                <span class="text-slate-300">Unable to verify</span>: none of the checks could run because the figures couldn't be read or confirmed.</p>
             <p><strong class="text-white font-mono">[04] THE VAULT</strong><br>Results are append-only: the database refuses to edit or delete them. Each record stores a SHA-256 fingerprint of the exact file audited.</p>
         </div>
         <button onclick="toggleUtilityModal('docsModal', false)" class="w-full py-2 bg-white/5 hover:bg-white/10 text-xs font-mono rounded border border-white/10 transition-all text-slate-300">
@@ -450,7 +440,7 @@
         badge.textContent = "● " + style.label;
 
         document.getElementById("snapshotSubtitle").textContent = metrics.totalAuditsProcessed > 0
-            ? `Figures from your most recent audit · ${metrics.totalAuditsProcessed} audit(s) in the vault`
+            ? `Totals from your most recent balance sheet · badge shows the latest verdict · ${metrics.totalAuditsProcessed} audit(s) in the vault`
             : "No audits yet. Upload a financial statement to begin.";
     }
 
@@ -538,21 +528,23 @@
         }
 
         const quote = value => `"${String(value ?? '').replace(/"/g, '""')}"`;
-        let csvContent = "Record ID,Vaulted At,Document,SHA-256,Document Type,Assets,Liabilities,Equity,Currency,Scale,Verdict\n";
+        // Amounts differ by document type, so they go in one "name=value; ..." column
+        let csvContent = "Record ID,Vaulted At,Document,SHA-256,Document Type,Amounts,Currency,Scale,Failed Checks,Verdict\n";
         vaultRecords.forEach(record => {
             const report = VaultApi.report(record);
             const figures = report ? report.figures || {} : {};
+            const amounts = VaultApi.amounts(report).map(a => `${a.label}=${a.value ?? 'not verified'}`).join('; ');
+            const failed = (report ? report.checks || [] : []).filter(c => !c.passed).map(c => c.name).join('; ');
             csvContent += [
                 record.id,
                 quote(record.vaultedAt),
                 quote(record.sourceName),
                 quote(record.sourceSha256),
                 quote(record.documentType),
-                figures.total_assets ?? '',
-                figures.total_liabilities ?? '',
-                figures.total_equity ?? '',
+                quote(amounts),
                 quote(figures.currency),
                 quote(figures.scale),
+                quote(failed),
                 record.auditStatus
             ].join(",") + "\n";
         });
@@ -641,9 +633,16 @@
         set("drawerSha", record.sourceSha256 || 'not recorded');
         set("drawerMethod", report ? report.extractionMethod : '--');
         set("drawerModel", report ? (report.model || '--') : '--');
-        set("drawerAssets", VaultApi.formatAmount(figures.total_assets, figures));
-        set("drawerLiabilities", VaultApi.formatAmount(figures.total_liabilities, figures));
-        set("drawerEquity", VaultApi.formatAmount(figures.total_equity, figures));
+
+        // One tile per amount this document type is checked on
+        const amountTiles = VaultApi.amounts(report);
+        document.getElementById("drawerAmounts").innerHTML = amountTiles.length === 0
+            ? `<p class="col-span-2 text-[11px] text-slate-500">No standard figures for this document type.</p>`
+            : amountTiles.map(a => `
+                <div class="p-3 bg-white/5 rounded-lg border border-white/5">
+                    <div class="text-[10px] text-slate-400 uppercase">${VaultApi.escapeHtml(a.label)}</div>
+                    <div class="text-xs font-bold ${a.value === null ? 'text-slate-500' : 'text-white'} mt-1">${VaultApi.escapeHtml(VaultApi.formatAmount(a.value, figures))}</div>
+                </div>`).join('');
 
         // Explain where the figures came from
         let note = "";
@@ -659,9 +658,17 @@
         }
         set("drawerFigureNote", note);
 
-        const allPresent = [figures.total_assets, figures.total_liabilities, figures.total_equity].every(v => v !== null && v !== undefined);
-        const variance = allPresent ? Number(figures.total_assets) - (Number(figures.total_liabilities) + Number(figures.total_equity)) : null;
-        set("drawerVarianceText", variance === null ? "Can't compute" : VaultApi.formatAmount(variance, figures));
+        // Every check the server ran, with the difference for equations
+        const checks = report ? report.checks || [] : [];
+        document.getElementById("drawerCheckList").innerHTML = checks.length === 0
+            ? `<li class="text-slate-500">No check could run: the figures it needs weren't found in the document.</li>`
+            : checks.map(c => `
+                <li class="flex justify-between gap-3">
+                    <span class="${c.passed ? 'text-emerald-400' : 'text-red-400'}">${c.passed ? '✓' : '✗'} ${VaultApi.escapeHtml(c.name)}</span>
+                    <span class="text-slate-400 shrink-0">${c.difference === null || c.difference === undefined ? ''
+                        : Number(c.difference) === 0 ? 'exact'
+                        : 'off by ' + VaultApi.escapeHtml(VaultApi.formatAmount(Math.abs(c.difference), figures))}</span>
+                </li>`).join('');
         set("drawerChecks", report
             ? `${VaultApi.statusStyle(report.arithmeticStatus).label} / ${VaultApi.statusStyle(report.modelStatus).label}`
             : '--');

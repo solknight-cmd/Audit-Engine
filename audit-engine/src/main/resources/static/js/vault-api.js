@@ -100,6 +100,32 @@ const VaultApi = (() => {
         return currency + number + scale;
     }
 
+    // Display names for the amounts each document type is checked on (see DocumentType.java)
+    const AMOUNT_LABELS = {
+        total_assets: 'Total assets', total_liabilities: 'Total liabilities', total_equity: 'Total equity',
+        revenue: 'Revenue', cost_of_sales: 'Cost of sales', gross_profit: 'Gross profit',
+        profit_before_tax: 'Profit before tax', income_tax: 'Income tax', net_profit: 'Net profit',
+        net_cash_from_operating: 'Operating cash flow', net_cash_from_investing: 'Investing cash flow',
+        net_cash_from_financing: 'Financing cash flow', net_change_in_cash: 'Net change in cash',
+        opening_cash: 'Opening cash', closing_cash: 'Closing cash',
+        total_debits: 'Total debits', total_credits: 'Total credits'
+    };
+
+    /** [{name, label, value}] for every amount in a report's figures, in the order the server stored them. */
+    function amounts(report) {
+        const figures = (report && report.figures) || {};
+        return Object.entries(figures.amounts || {}).map(([name, value]) => ({
+            name, label: AMOUNT_LABELS[name] || name, value
+        }));
+    }
+
+    /** One amount from a report, or null. */
+    function amount(report, name) {
+        const figures = (report && report.figures) || {};
+        const value = (figures.amounts || {})[name];
+        return value === undefined ? null : value;
+    }
+
     function formatDate(isoString) {
         return isoString ? new Date(isoString).toLocaleString() : '--';
     }
@@ -139,7 +165,7 @@ const VaultApi = (() => {
     }
 
     return {
-        request, me, vault, metrics, upload, logout, stream, report,
+        request, me, vault, metrics, upload, logout, stream, report, amounts, amount,
         escapeHtml, formatAmount, formatDate, statusStyle, statusBadge, showCurrentUser
     };
 })();

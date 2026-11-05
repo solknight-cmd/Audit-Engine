@@ -150,9 +150,10 @@
         const report = record ? VaultApi.report(record) : null;
         const figures = (report && report.figures) || {};
 
-        const assets = figures.total_assets;
-        const liabilities = figures.total_liabilities;
-        const equity = figures.total_equity;
+        // Ratios come from balance sheets; other statements show "--"
+        const assets = VaultApi.amount(report, 'total_assets');
+        const liabilities = VaultApi.amount(report, 'total_liabilities');
+        const equity = VaultApi.amount(report, 'total_equity');
         const has = value => value !== null && value !== undefined;
 
         // Ratios only from verified figures; unverified ones are null and shown as "--"
@@ -178,10 +179,10 @@
         stressCard.className = `p-6 rounded-xl border ${style.badge}`;
         stressVerdict.textContent = style.label.toUpperCase();
         stressDesc.textContent = {
-            PASSED: "The accounting equation balances and leverage is within limits.",
+            PASSED: "Every arithmetic check passed and the AI found no serious issue.",
             HIGH_LEVERAGE_RISK: "Liabilities are above 80% of assets.",
-            ANOMALY_DETECTED: "The equation doesn't balance or the AI flagged a serious issue.",
-            UNABLE_TO_VERIFY: "The totals couldn't be read or confirmed in the document."
+            ANOMALY_DETECTED: "An arithmetic check failed or the AI flagged a serious issue.",
+            UNABLE_TO_VERIFY: "The figures the checks need couldn't be read or confirmed in the document."
         }[record.auditStatus] || "";
 
         const findings = report ? report.findings || [] : [];
