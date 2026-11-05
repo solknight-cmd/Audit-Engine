@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;family=Metropolis:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#131313",
+                      "on-background": "#e5e2e1",
+                      "surface-variant": "#353535",
+                      "surface-container-high": "#2a2a2a",
+                      "on-surface-variant": "#d0c5af",
+                      "on-primary": "#3c2f00",
+                      "secondary-fixed-dim": "#c6c6c6",
+                      "on-primary-fixed": "#241a00",
+                      "secondary": "#c6c6c6",
+                      "on-tertiary-fixed": "#410001",
+                      "on-secondary": "#303030",
+                      "on-tertiary-fixed-variant": "#930005",
+                      "on-error-container": "#ffdad6",
+                      "primary-container": "#d4af37",
+                      "on-primary-container": "#554300",
+                      "surface-bright": "#393939",
+                      "outline": "#99907c",
+                      "surface": "#131313",
+                      "tertiary-container": "#ff9688",
+                      "outline-variant": "#4d4635",
+                      "on-secondary-fixed": "#1b1b1b",
+                      "on-primary-fixed-variant": "#574500",
+                      "inverse-on-surface": "#313030",
+                      "tertiary-fixed": "#ffdad5",
+                      "tertiary-fixed-dim": "#ffb4aa",
+                      "on-secondary-container": "#b5b5b5",
+                      "on-surface": "#e5e2e1",
+                      "primary-fixed-dim": "#e9c349",
+                      "on-tertiary": "#690003",
+                      "on-secondary-fixed-variant": "#474747",
+                      "surface-container-low": "#1c1b1b",
+                      "secondary-fixed": "#e2e2e2",
+                      "surface-container-lowest": "#0e0e0e",
+                      "inverse-surface": "#e5e2e1",
+                      "secondary-container": "#474747",
+                      "primary": "#f2ca50",
+                      "on-error": "#690005",
+                      "error": "#ffb4ab",
+                      "surface-tint": "#e9c349",
+                      "tertiary": "#ffbfb6",
+                      "on-tertiary-container": "#900005",
+                      "surface-container": "#20201f",
+                      "background": "#131313",
+                      "surface-container-highest": "#353535",
+                      "primary-fixed": "#ffe088",
+                      "inverse-primary": "#735c00",
+                      "error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "margin-mobile": "20px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "headline-md-mobile": ["Montserrat"],
+                      "label-caps": ["Montserrat"],
+                      "display-lg": ["Montserrat"],
+                      "body-sm": ["Metropolis"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-lg": ["Metropolis"],
+                      "headline-md": ["Montserrat"]
+              },
+              "fontSize": {
+                      "headline-md-mobile": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "data-mono": ["13px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.2", "letterSpacing": "0.03em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #e5e2e1;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .glow-gold {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+        .gold-border {
+            border: 0.5px solid rgba(212, 175, 55, 0.4);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-pulse {
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(52, 199, 89, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
+        }
+        .grid-pattern {
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="font-body-lg text-body-lg">
+<!-- Top Navigation -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)]">
+    <nav class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+        <div class="flex items-center gap-8">
+            <span class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</span>
+            <!-- Navigation template for the landing pages -->
+            <!-- Public Nav Links: ONLY these change pages -->
+            <a href="/landing/about.html">Legal</a>
+            <a href="/landing/security.html">Privacy</a>
+            <a href="/landing/status.html">Security Status</a>
+
+            <!-- Launch Console Button: ONLY this button triggers the login page -->
+            <button onclick="window.location.href='/Login.html';" class="...">
+                Launch Console
+            </button>
+        </div>
+        <button class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">
+            Launch Console
+        </button>
+    </nav>
+</header>
+<main class="pt-32 pb-20 relative">
+    <!-- Background Decoration -->
+    <div class="absolute inset-0 grid-pattern pointer-events-none opacity-40"></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="max-w-container-max mx-auto px-margin-desktop relative z-10">
+        <!-- Hero Section -->
+        <section class="mb-24">
+            <div class="flex flex-col gap-4">
+                <span class="text-primary font-label-caps text-label-caps tracking-[0.3em]">SECURE INFRASTRUCTURE</span>
+                <h1 class="font-display-lg text-display-lg max-w-4xl text-on-surface">
+                    Security You Can Check. <br/>
+                    <span class="text-on-surface-variant">Isolation by Company.</span>
+                </h1>
+                <p class="text-on-surface-variant max-w-2xl mt-4 opacity-80">
+                    What protects your data today, what isn't in place yet, and exactly where your documents go.
+                </p>
+            </div>
+        </section>
+        <!-- Defensive Stack Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-24">
+            <!-- Data at Rest -->
+            <div class="glass-panel p-8 flex flex-col gap-6 group hover:gold-border transition-all duration-500">
+                <div class="flex justify-between items-start">
+                    <span class="material-symbols-outlined text-primary text-4xl" data-icon="encrypted">encrypted</span>
+                    <span class="font-data-mono text-data-mono text-primary px-3 py-1 border border-primary/20 bg-primary/5">AT REST</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <h3 class="font-headline-md text-headline-md text-on-surface">Your Data in the Vault</h3>
+                    <p class="text-on-surface-variant text-body-sm">Audit results and extracted text are stored in PostgreSQL. Results are append-only: database triggers reject any edit or deletion. Encryption at rest depends on the hosting environment and will be switched on for every hosted deployment; it is not something the platform guarantees today.</p>
+                </div>
+                <div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant">TODAY</span>
+                    <span class="font-data-mono text-data-mono text-on-surface">Append-only · Encryption planned</span>
+                </div>
+            </div>
+            <!-- Data in Transit -->
+            <div class="glass-panel p-8 flex flex-col gap-6 group hover:gold-border transition-all duration-500">
+                <div class="flex justify-between items-start">
+                    <span class="material-symbols-outlined text-primary text-4xl" data-icon="vibration">vibration</span>
+                    <span class="font-data-mono text-data-mono text-primary px-3 py-1 border border-primary/20 bg-primary/5">ACCESS</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <h3 class="font-headline-md text-headline-md text-on-surface">Sign-In and Access</h3>
+                    <p class="text-on-surface-variant text-body-sm">Passwords are stored as BCrypt hashes. Sessions use a cookie other sites can't send or read, and every change needs a CSRF token. Each request is checked against the user's company on the server. Hosted deployments must run over HTTPS, which is set up at deployment.</p>
+                </div>
+                <div class="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+                    <span class="font-label-caps text-[10px] text-on-surface-variant">TODAY</span>
+                    <span class="font-data-mono text-data-mono text-on-surface">BCrypt · CSRF · SameSite</span>
+                </div>
+            </div>
+        </section>
+        <!-- Vulnerability Guard Block -->
+        <section class="mb-24">
+            <div class="glass-panel overflow-hidden relative">
+                <div class="p-8 md:p-12 flex flex-col md:flex-row gap-12 items-center">
+                    <div class="flex-1 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-[#34C759] neon-pulse"></div>
+                            <span class="text-[#34C759] font-data-mono text-data-mono uppercase tracking-widest">Disclosed</span>
+                        </div>
+                        <h2 class="font-headline-md text-headline-md md:text-4xl text-on-surface">Where Your Documents Go</h2>
+                        <p class="text-on-surface-variant max-w-xl">
+                            To review a statement, Vault Core sends its extracted text, or page images for scans and photos, to an AI provider: currently Groq. Original files are not kept after processing; the vault stores the extracted text, the report and a SHA-256 fingerprint. Security testing today is the platform's own automated test suite (company isolation, the append-only vault, CSRF and sign-in). An independent penetration test is planned before production pilots.
+                        </p>
+                        <div class="flex gap-4 pt-4">
+                            <div class="flex flex-col">
+                                <span class="font-data-mono text-2xl text-primary">Groq</span>
+                                <span class="font-label-caps text-[10px] text-on-surface-variant">AI PROVIDER</span>
+                            </div>
+                            <div class="w-px h-10 bg-white/10"></div>
+                            <div class="flex flex-col">
+                                <span class="font-data-mono text-2xl text-primary">SHA-256</span>
+                                <span class="font-label-caps text-[10px] text-on-surface-variant">PER DOCUMENT</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 aspect-square relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-full h-full border-[0.5px] border-primary/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                            <div class="absolute w-4/5 h-4/5 border-[0.5px] border-primary/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+                            <span class="material-symbols-outlined text-primary text-8xl" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Compliance Table -->
+        <section class="mb-24">
+            <div class="flex flex-col gap-8">
+                <div class="flex justify-between items-end">
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Certifications</h2>
+                    
+                </div>
+                <div class="glass-panel overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                        <tr class="border-b border-white/10">
+                            <th class="px-8 py-6 font-label-caps text-label-caps text-on-surface-variant uppercase">Framework</th>
+                            <th class="px-8 py-6 font-label-caps text-label-caps text-on-surface-variant uppercase">Status</th>
+                            <th class="px-8 py-6 font-label-caps text-label-caps text-on-surface-variant uppercase">Scope</th>
+                            <th class="px-8 py-6 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Plan</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-8 py-6 font-headline-md text-on-surface">SOC 2 Type II</td>
+                            <td class="px-8 py-6"><span class="bg-white/5 text-on-surface-variant border border-white/10 px-3 py-1 font-data-mono text-[11px] uppercase">Not certified</span></td>
+                            <td class="px-8 py-6 text-on-surface-variant text-body-sm">Trust Service Criteria (Security, Availability)</td>
+                            <td class="px-8 py-6 font-data-mono text-data-mono text-right text-on-surface-variant">After production launch</td>
+                        </tr>
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-8 py-6 font-headline-md text-on-surface">ISO/IEC 27001</td>
+                            <td class="px-8 py-6"><span class="bg-white/5 text-on-surface-variant border border-white/10 px-3 py-1 font-data-mono text-[11px] uppercase">Not certified</span></td>
+                            <td class="px-8 py-6 text-on-surface-variant text-body-sm">Information Security Management</td>
+                            <td class="px-8 py-6 font-data-mono text-data-mono text-right text-on-surface-variant">Under consideration</td>
+                        </tr>
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-8 py-6 font-headline-md text-on-surface">GDPR / NDPR</td>
+                            <td class="px-8 py-6"><span class="bg-white/5 text-on-surface-variant border border-white/10 px-3 py-1 font-data-mono text-[11px] uppercase">Not assessed</span></td>
+                            <td class="px-8 py-6 text-on-surface-variant text-body-sm">Personal data in uploaded documents</td>
+                            <td class="px-8 py-6 font-data-mono text-data-mono text-right text-on-surface-variant">Privacy review before pilots</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <!-- Final CTA -->
+        <section class="mb-24 flex justify-center">
+            <div class="glass-panel p-12 text-center max-w-3xl flex flex-col items-center gap-6 border-primary/20">
+                <span class="material-symbols-outlined text-primary text-5xl" data-icon="policy">policy</span>
+                <h2 class="font-headline-md text-headline-md text-on-surface">In the Console</h2>
+                <p class="text-on-surface-variant text-center">
+                    Signed-in users can see the live pipeline log, every audit their company has vaulted, and the fingerprint of each document.
+                </p>
+                <button class="bg-primary text-on-primary px-10 py-4 font-label-caps text-label-caps hover:glow-gold transition-all duration-300">
+                    Launch Console
+                </button>
+            </div>
+        </section>
+    </div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-white/5">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop py-gutter max-w-container-max mx-auto">
+        <div class="flex flex-col gap-2 mb-6 md:mb-0">
+            <span class="font-label-caps text-label-caps text-primary uppercase">Vault Core</span>
+            <p class="font-data-mono text-data-mono text-on-surface-variant opacity-60">© 2026 Vault Core.</p>
+        </div>
+        <div class="flex gap-8">
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="#">Legal</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="#">Security Status</a>
+        </div>
+    </div>
+</footer>
+<script>
+    // Micro-interaction for system health indicator
+    const statusColors = ['#34C759', '#D4AF37'];
+    let currentIndex = 0;
+
+    // Simulating a "heartbeat" status check
+    setInterval(() => {
+        const shield = document.querySelector('.neon-pulse');
+        if (shield) {
+            shield.style.opacity = '0.7';
+            setTimeout(() => {
+                shield.style.opacity = '1';
+            }, 200);
+        }
+    }, 3000);
+
+    // Subtle parallax/mouse move effect on glass panels
+    document.querySelectorAll('.glass-panel').forEach(panel => {
+        panel.addEventListener('mousemove', (e) => {
+            const rect = panel.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            panel.style.setProperty('--mouse-x', `${x}px`);
+            panel.style.setProperty('--mouse-y', `${y}px`);
+
+            // Subtle highlight tilt
+            const xRotation = ((y - rect.height / 2) / rect.height) * 2;
+            const yRotation = ((x - rect.width / 2) / rect.width) * -2;
+            panel.style.transform = `perspective(1000px) rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+        });
+
+        panel.addEventListener('mouseleave', () => {
+            panel.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+    });
+</script>
+</body></html>
