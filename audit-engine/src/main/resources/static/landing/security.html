@@ -132,25 +132,31 @@
 </head>
 <body class="font-body-lg text-body-lg">
 <!-- Top Navigation -->
+<!-- Shared landing navigation: keep identical on every landing page (generated, only the active link differs) -->
 <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)]">
-    <nav class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div class="flex items-center gap-8">
-            <span class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</span>
-            <!-- Navigation template for the landing pages -->
-            <!-- Public Nav Links: ONLY these change pages -->
-            <a href="/landing/about.html">Legal</a>
-            <a href="/landing/security.html">Privacy</a>
-            <a href="/landing/status.html">Security Status</a>
-
-            <!-- Launch Console Button: ONLY this button triggers the login page -->
-            <button onclick="window.location.href='/Login.html';" class="...">
-                Launch Console
+    <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+        <a href="/landing/index.html" class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</a>
+        <div class="hidden md:flex items-center gap-8">
+                <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">How It Works</a>
+                <a href="/landing/security.html" aria-current="page" class="font-label-caps text-label-caps text-primary transition-colors">Security</a>
+                <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Plans</a>
+                <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Status</a>
+                <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/Login.html" class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">Launch Console</a>
+            <button type="button" class="md:hidden text-primary" aria-label="Open menu" aria-controls="mobileNav" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
             </button>
         </div>
-        <button class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">
-            Launch Console
-        </button>
     </nav>
+    <div id="mobileNav" class="hidden md:hidden border-t border-white/10 px-margin-mobile py-4 flex flex-col gap-4">
+        <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">How It Works</a>
+        <a href="/landing/security.html" aria-current="page" class="font-label-caps text-label-caps text-primary">Security</a>
+        <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Plans</a>
+        <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Status</a>
+        <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">About</a>
+    </div>
 </header>
 <main class="pt-32 pb-20 relative">
     <!-- Background Decoration -->
@@ -287,9 +293,7 @@
                 <p class="text-on-surface-variant text-center">
                     Signed-in users can see the live pipeline log, every audit their company has vaulted, and the fingerprint of each document.
                 </p>
-                <button class="bg-primary text-on-primary px-10 py-4 font-label-caps text-label-caps hover:glow-gold transition-all duration-300">
-                    Launch Console
-                </button>
+                <a href="/Login.html" class="bg-primary text-on-primary px-10 py-4 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 inline-block text-center">Launch Console</a>
             </div>
         </section>
     </div>
@@ -302,9 +306,11 @@
             <p class="font-data-mono text-data-mono text-on-surface-variant opacity-60">© 2026 Vault Core.</p>
         </div>
         <div class="flex gap-8">
-            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="#">Legal</a>
-            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy</a>
-            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="#">Security Status</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="/landing/security.html">Security</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="/landing/tiering.html">Plans</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="/landing/status.html">Status</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="/landing/about.html">About</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors" href="/landing/architecture.html">How It Works</a>
         </div>
     </div>
 </footer>

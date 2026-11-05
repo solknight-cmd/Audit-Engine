@@ -142,23 +142,31 @@
   </div>
 </div>
 <!-- Navigation -->
-<header class="bg-surface-container-lowest dark:bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)] sticky top-0 z-50">
-  <div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
-    <div class="font-display-lg text-display-lg text-primary dark:text-primary tracking-tighter">Vault Core</div>
-    <!-- Navigation template for the landing pages -->
-    <!-- Public Nav Links: ONLY these change pages -->
-    <a href="/landing/about.html">Legal</a>
-    <a href="/landing/security.html">Privacy</a>
-    <a href="/landing/status.html">Security Status</a>
-
-    <!-- Launch Console Button: ONLY this button triggers the login page -->
-    <button onclick="window.location.href='/Login.html';" class="...">
-      Launch Console
-    </button>
-    <button class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps active:scale-95 transition-transform hover:glow-gold">
-      Launch Console
-    </button>
-  </div>
+<!-- Shared landing navigation: keep identical on every landing page (generated, only the active link differs) -->
+<header class="sticky top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)]">
+    <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+        <a href="/landing/index.html" class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</a>
+        <div class="hidden md:flex items-center gap-8">
+                <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">How It Works</a>
+                <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Security</a>
+                <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Plans</a>
+                <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Status</a>
+                <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/Login.html" class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">Launch Console</a>
+            <button type="button" class="md:hidden text-primary" aria-label="Open menu" aria-controls="mobileNav" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </nav>
+    <div id="mobileNav" class="hidden md:hidden border-t border-white/10 px-margin-mobile py-4 flex flex-col gap-4">
+        <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">How It Works</a>
+        <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Security</a>
+        <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Plans</a>
+        <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Status</a>
+        <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">About</a>
+    </div>
 </header>
 <main>
   <!-- Hero Section -->
@@ -172,12 +180,8 @@
       Upload a balance sheet, income statement or trial balance. Vault Core reads it, checks the key figures, explains anything that doesn't add up, and records the result in an append-only audit vault.
     </p>
     <div class="flex flex-col md:flex-row gap-6">
-      <button class="bg-primary text-on-primary px-10 py-4 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">
-        Launch Console
-      </button>
-      <button class="bg-transparent border border-primary text-primary px-10 py-4 font-label-caps text-label-caps hover:bg-primary/5 transition-all duration-300 active:scale-95">
-        Request Access
-      </button>
+      <a href="/Login.html" class="bg-primary text-on-primary px-10 py-4 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95 inline-block text-center">Launch Console</a>
+      <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20access%20request" class="bg-transparent border border-primary text-primary px-10 py-4 font-label-caps text-label-caps hover:bg-primary/5 transition-all duration-300 active:scale-95 inline-block text-center">Request Access</a>
     </div>
   </section>
   <!-- Cinematic Vault Interaction -->
@@ -277,12 +281,8 @@
         Upload a statement and see the verdict, the figures it was based on, and the reasons for yourself.
       </p>
       <div class="flex flex-col md:flex-row justify-center gap-6">
-        <button class="bg-primary text-on-primary px-12 py-5 font-label-caps text-label-caps hover:glow-gold transition-all duration-300">
-          Launch Console
-        </button>
-        <button class="bg-transparent border border-primary text-primary px-12 py-5 font-label-caps text-label-caps hover:bg-primary/5 transition-all duration-300">
-          Contact Sales
-        </button>
+        <a href="/Login.html" class="bg-primary text-on-primary px-12 py-5 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 inline-block text-center">Launch Console</a>
+        <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20enquiry" class="bg-transparent border border-primary text-primary px-12 py-5 font-label-caps text-label-caps hover:bg-primary/5 transition-all duration-300 inline-block text-center">Contact Sales</a>
       </div>
     </div>
   </section>
@@ -292,9 +292,11 @@
   <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto gap-8">
     <div class="font-label-caps text-label-caps text-primary">Vault Core</div>
     <div class="flex items-center gap-8">
-      <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">Legal</a>
-      <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">Privacy</a>
-      <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">Security Status</a>
+      <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/security.html">Security</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/tiering.html">Plans</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/status.html">Status</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/about.html">About</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/architecture.html">How It Works</a>
     </div>
     <div class="font-data-mono text-data-mono text-on-surface-variant">
       © 2026 Vault Core.
