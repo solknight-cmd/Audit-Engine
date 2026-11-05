@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vault.audit_engine.model.AuditCompletedEvent;
 import com.vault.audit_engine.model.AuditRecord;
 import com.vault.audit_engine.model.AuditReport;
+import com.vault.audit_engine.model.DocumentType;
 import com.vault.audit_engine.model.ExtractedDocument;
 import com.vault.audit_engine.model.ModelAssessment;
 import com.vault.audit_engine.repository.AuditRecordRepository;
@@ -56,17 +57,23 @@ public class VaultProcessingService {
                     : "FORWARDING: Sending extracted text to the AI model...");
             ModelAssessment assessment = modelClient.assess(documentType, document);
 
-            sseLogService.log(companyId, "VERIFYING: Checking the model's figures against the document and the accounting equation...");
-            AuditReport report = AuditVerdict.buildReport(document, assessment);
+            DocumentType type = DocumentType.from(documentType);
+            sseLogService.log(companyId, "VERIFYING: Checking the model's figures against the document and the "
+                    + type.name().toLowerCase().replace('_', ' ') + " arithmetic...");
+            AuditReport report = AuditVerdict.buildReport(document, type, assessment);
             if (!report.unverifiedFigures().isEmpty()) {
                 sseLogService.log(companyId, "WARN: Figures not found in the document text: " + report.unverifiedFigures());
+            }
+            for (AuditReport.CheckResult check : report.checks()) {
+                sseLogService.log(companyId, (check.passed() ? "CHECK PASSED: " : "WARN: CHECK FAILED: ") + check.name()
+                        + (check.difference() == null ? "" : " (difference " + check.difference().toPlainString() + ")"));
             }
 
             AuditRecord record = new AuditRecord(companyId, documentType, document.text(),
                     objectMapper.writeValueAsString(report), report.status(),
                     document.sourceName(), document.sha256());
             auditRecordRepository.save(record);
-            eventPublisher.publishEvent(new AuditCompletedEvent(companyId, report.status(), report.figures()));
+            eventPublisher.publishEvent(new AuditCompletedEvent(companyId, report.status(), type, report.figures()));
 
             logger.info("Vaulted audit for Company: {}. Status: {}", companyId, report.status());
             sseLogService.log(companyId, "SECURE: Audit record appended to the vault. VERDICT: " + report.status());

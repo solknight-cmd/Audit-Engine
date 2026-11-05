@@ -38,7 +38,7 @@ class GroqAuditClientTest {
     }
 
     private static final String ASSESSMENT = """
-            {"figures":{"total_assets":1250000,"total_liabilities":500000,"total_equity":750000,
+            {"figures":{"amounts":{"total_assets":1250000,"total_liabilities":500000,"total_equity":750000},
              "currency":"NGN","period":"31 Dec 2025","scale":"thousands"},
              "status":"PASSED","findings":[{"severity":"LOW","description":"No comparatives"}]}
             """;
@@ -50,12 +50,15 @@ class GroqAuditClientTest {
                 .andExpect(jsonPath("$.model").value("text-model"))
                 .andExpect(jsonPath("$.response_format.type").value("json_object"))
                 .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString("Total assets 1,250,000")))
+                // The user message asks for the amounts this document type is checked on
+                .andExpect(jsonPath("$.messages[1].content").value(org.hamcrest.Matchers.containsString(
+                        "Report these amounts in figures.amounts: total_assets, total_liabilities, total_equity")))
                 .andRespond(withSuccess(completion(ASSESSMENT), MediaType.APPLICATION_JSON));
 
         ModelAssessment result = client.assess("BALANCE_SHEET", new ExtractedDocument(
                 "bs.pdf", "abc", "Total assets 1,250,000", List.of(), "PDF_TEXT", false));
 
-        assertEquals(new BigDecimal("1250000"), result.figures().totalAssets());
+        assertEquals(new BigDecimal("1250000"), result.figures().amount("total_assets"));
         assertEquals("thousands", result.figures().scale());
         assertEquals("PASSED", result.status());
         assertEquals(1, result.findings().size());
@@ -76,7 +79,7 @@ class GroqAuditClientTest {
                 "scan.pdf", "abc", "[Scanned PDF]", List.of(new DocumentImage("image/jpeg", "AAAA")), "PDF_SCANNED", false));
 
         assertEquals("vision-model", result.model());
-        assertEquals(new BigDecimal("750000"), result.figures().totalEquity());
+        assertEquals(new BigDecimal("750000"), result.figures().amount("total_equity"));
         server.verify();
     }
 
@@ -88,6 +91,22 @@ class GroqAuditClientTest {
         AuditModelException e = assertThrows(AuditModelException.class, () -> client.assess("BALANCE_SHEET",
                 new ExtractedDocument("bs.pdf", "abc", "text", List.of(), "PDF_TEXT", false)));
         assertTrue(e.getMessage().contains("rate limit"));
+    }
+
+    @Test
+    void amountsReturnedAsTextAreStillRead() {
+        // Seen from the real model on a CSV with quoted amounts
+        ModelAssessment result = client.parseAssessment("""
+                {"figures":{"amounts":{"total_assets":"1,000,000","total_liabilities":"(400,000)",
+                 "total_equity":"₦600,000.50","net_change_in_cash":"-","other":"n/a"}},
+                 "status":"PASSED","findings":[]}
+                """);
+
+        assertEquals(new BigDecimal("1000000"), result.figures().amount("total_assets"));
+        assertEquals(new BigDecimal("-400000"), result.figures().amount("total_liabilities"));
+        assertEquals(new BigDecimal("600000.50"), result.figures().amount("total_equity"));
+        assertNull(result.figures().amount("net_change_in_cash"));
+        assertNull(result.figures().amount("other"));
     }
 
     @Test

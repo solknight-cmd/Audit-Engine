@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -68,8 +69,9 @@ class AuditVaultIntegrationTest {
     }
 
     private static ModelAssessment passingAssessment(String assets, String liabilities, String equity) {
-        return new ModelAssessment(new StatementFigures(new BigDecimal(assets), new BigDecimal(liabilities),
-                new BigDecimal(equity), null, null, null), "PASSED", List.of(), "mock-model");
+        return new ModelAssessment(new StatementFigures(Map.of("total_assets", new BigDecimal(assets),
+                "total_liabilities", new BigDecimal(liabilities), "total_equity", new BigDecimal(equity)),
+                null, null, null), "PASSED", List.of(), "mock-model");
     }
 
     @Test

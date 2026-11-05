@@ -1,19 +1,22 @@
 package com.vault.audit_engine.service;
 
 import com.vault.audit_engine.model.AuditReport;
+import com.vault.audit_engine.model.DocumentType;
 import com.vault.audit_engine.model.ExtractedDocument;
 import com.vault.audit_engine.model.ModelAssessment;
 import com.vault.audit_engine.model.StatementFigures;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
  * Turns the AI model's assessment into the vault's verdict. The model is not trusted on its own:
- * its figures must appear in the document text, the accounting equation is checked here, and the
- * final status is the worse of the arithmetic check and the model's opinion.
+ * its amounts must appear in the document text, the arithmetic for the document type is checked
+ * here ({@link StatementChecks}), and the final status is the worse of those checks and the model's opinion.
  */
 public final class AuditVerdict {
 
@@ -25,42 +28,39 @@ public final class AuditVerdict {
     // Ordered from best to worst; the final verdict is the worst of the checks
     private static final List<String> SEVERITY_ORDER = List.of(PASSED, UNABLE_TO_VERIFY, HIGH_LEVERAGE_RISK, ANOMALY_DETECTED);
 
-    // Tolerance for rounding in the accounting equation check
-    private static final BigDecimal TOLERANCE = BigDecimal.ONE;
-    private static final BigDecimal HIGH_LEVERAGE_RATIO = new BigDecimal("0.80");
-
     // Digit-group separators: "1,234,567" becomes "1234567". Plain spaces are left alone because
     // statements put year columns side by side ("1,000 900"), and merging those would corrupt both.
     private static final Pattern THOUSANDS_SEPARATOR = Pattern.compile("(?<=\\d)[,\\u00A0\\u202F](?=\\d{3}(?!\\d))");
 
     private AuditVerdict() {}
 
-    public static AuditReport buildReport(ExtractedDocument document, ModelAssessment assessment) {
+    public static AuditReport buildReport(ExtractedDocument document, DocumentType type, ModelAssessment assessment) {
         StatementFigures reported = assessment.figures();
         List<String> unverified = new ArrayList<>();
-        StatementFigures figures;
         String figureCheck;
 
+        // Only the amounts this document type is checked on; anything else the model volunteered is dropped
+        Map<String, BigDecimal> amounts = new LinkedHashMap<>();
         if (document.hasImages()) {
-            // No text layer to check against: figures were read by the vision model
-            figures = reported;
+            // No text layer to check against: amounts were read by the vision model
+            type.amountFields().forEach(name -> amounts.put(name, reported.amount(name)));
             figureCheck = "READ_FROM_IMAGES";
         } else {
             String normalizedText = normalizeNumbers(document.text());
-            figures = new StatementFigures(
-                    grounded("total_assets", reported.totalAssets(), normalizedText, unverified),
-                    grounded("total_liabilities", reported.totalLiabilities(), normalizedText, unverified),
-                    grounded("total_equity", reported.totalEquity(), normalizedText, unverified),
-                    reported.currency(), reported.period(), reported.scale());
+            type.amountFields().forEach(name ->
+                    amounts.put(name, grounded(name, reported.amount(name), normalizedText, unverified)));
             figureCheck = "CHECKED_AGAINST_TEXT";
         }
+        StatementFigures figures = reported.withAmounts(amounts);
 
-        String arithmeticStatus = arithmeticStatus(figures.totalAssets(), figures.totalLiabilities(), figures.totalEquity());
+        StatementChecks.Outcome checks = StatementChecks.run(type, figures);
         String modelStatus = modelStatus(assessment);
 
         return new AuditReport(
-                worst(arithmeticStatus, modelStatus),
-                arithmeticStatus,
+                worst(checks.status(), modelStatus),
+                type,
+                checks.status(),
+                checks.checks(),
                 modelStatus,
                 figures,
                 figureCheck,
@@ -69,25 +69,6 @@ public final class AuditVerdict {
                 assessment.model(),
                 document.method(),
                 document.truncated());
-    }
-
-    public static String arithmeticStatus(BigDecimal assets, BigDecimal liabilities, BigDecimal equity) {
-        // Never report PASSED for figures we couldn't read or verify
-        if (assets == null || liabilities == null || equity == null) {
-            return UNABLE_TO_VERIFY;
-        }
-
-        // RULE 1: Accounting equation, Assets = Liabilities + Equity
-        if (assets.subtract(liabilities.add(equity)).abs().compareTo(TOLERANCE) > 0) {
-            return ANOMALY_DETECTED;
-        }
-
-        // RULE 2: High leverage, Liabilities / Assets above 80%
-        if (assets.signum() > 0 && liabilities.compareTo(assets.multiply(HIGH_LEVERAGE_RATIO)) > 0) {
-            return HIGH_LEVERAGE_RISK;
-        }
-
-        return PASSED;
     }
 
     /** The model's verdict, treated as an anomaly if it says anything other than PASSED or raised a HIGH finding. */
@@ -101,7 +82,7 @@ public final class AuditVerdict {
         return SEVERITY_ORDER.indexOf(first) >= SEVERITY_ORDER.indexOf(second) ? first : second;
     }
 
-    /** Keeps the figure only if that number is printed in the document; otherwise records it as unverified. */
+    /** Keeps the amount only if that number is printed in the document; otherwise records it as unverified. */
     private static BigDecimal grounded(String name, BigDecimal value, String normalizedText, List<String> unverified) {
         if (value == null) {
             return null;

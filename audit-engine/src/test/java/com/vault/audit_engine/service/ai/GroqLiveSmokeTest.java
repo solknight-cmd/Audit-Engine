@@ -2,6 +2,7 @@ package com.vault.audit_engine.service.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vault.audit_engine.model.AuditReport;
+import com.vault.audit_engine.model.DocumentType;
 import com.vault.audit_engine.model.ExtractedDocument;
 import com.vault.audit_engine.service.AuditVerdict;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class GroqLiveSmokeTest {
                 Total liabilities and equity 1,000,000
                 """, List.of(), "PLAIN_TEXT", false);
 
-        AuditReport report = AuditVerdict.buildReport(document, client.assess("BALANCE_SHEET", document));
+        AuditReport report = AuditVerdict.buildReport(document, DocumentType.BALANCE_SHEET, client.assess("BALANCE_SHEET", document));
         System.out.println("Live Groq report: " + report);
 
         assertEquals(List.of(), report.unverifiedFigures());
@@ -82,11 +83,73 @@ class GroqLiveSmokeTest {
                 List.of(new ExtractedDocument.DocumentImage("image/png", Base64.getEncoder().encodeToString(png.toByteArray()))),
                 "IMAGE", false);
 
-        AuditReport report = AuditVerdict.buildReport(document, client.assess("BALANCE_SHEET", document));
+        AuditReport report = AuditVerdict.buildReport(document, DocumentType.BALANCE_SHEET, client.assess("BALANCE_SHEET", document));
         System.out.println("Live Groq vision report: " + report);
 
         assertEquals("READ_FROM_IMAGES", report.figureCheck());
         assertEquals("PASSED", report.arithmeticStatus());
+    }
+
+    @Test
+    void realModelChecksAnIncomeStatement() {
+        AuditReport report = auditText(DocumentType.INCOME_STATEMENT, """
+                Example Ltd - Statement of profit or loss for the year ended 31 December 2025 (NGN '000)
+                Revenue                              5,000,000
+                Cost of sales                       (3,000,000)
+                Gross profit                         2,000,000
+                Administrative expenses             (1,050,000)
+                Operating profit                       950,000
+                Finance costs                         (150,000)
+                Profit before tax                      800,000
+                Income tax expense                    (240,000)
+                Profit for the year                    560,000
+                """);
+
+        assertEquals(List.of(), report.unverifiedFigures());
+        assertEquals(2, report.checks().size());
+        assertEquals("PASSED", report.arithmeticStatus());
+    }
+
+    @Test
+    void realModelChecksACashFlowStatement() {
+        AuditReport report = auditText(DocumentType.CASH_FLOW_STATEMENT, """
+                Example Ltd - Statement of cash flows for the year ended 31 December 2025 (NGN '000)
+                Net cash from operating activities          900,000
+                Net cash used in investing activities      (600,000)
+                Net cash used in financing activities      (200,000)
+                Net increase in cash and cash equivalents   100,000
+                Cash and cash equivalents at 1 January      400,000
+                Cash and cash equivalents at 31 December    500,000
+                """);
+
+        assertEquals(2, report.checks().size());
+        assertEquals("PASSED", report.arithmeticStatus());
+    }
+
+    @Test
+    void realModelCatchesATrialBalanceThatDoesNotBalance() {
+        AuditReport report = auditText(DocumentType.TRIAL_BALANCE, """
+                Example Ltd - Trial balance as at 31 December 2025 (NGN)
+                Account                     Debit         Credit
+                Cash                      150,000
+                Receivables               250,000
+                Equipment                 600,000
+                Payables                                 200,000
+                Loans                                    200,000
+                Share capital                            100,000
+                Retained earnings                        480,000
+                Totals                  1,000,000        980,000
+                """);
+
+        assertEquals("ANOMALY_DETECTED", report.arithmeticStatus());
+        assertEquals("ANOMALY_DETECTED", report.status());
+    }
+
+    private AuditReport auditText(DocumentType type, String statement) {
+        ExtractedDocument document = new ExtractedDocument("smoke-test.txt", "n/a", statement, List.of(), "PLAIN_TEXT", false);
+        AuditReport report = AuditVerdict.buildReport(document, type, client.assess(type.name(), document));
+        System.out.println("Live Groq " + type + " report: " + report);
+        return report;
     }
 
     private static String envOr(String name, String fallback) {
