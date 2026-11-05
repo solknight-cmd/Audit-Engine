@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Core | Product Architecture &amp; Features</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Metropolis:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#131313",
+                        "on-background": "#e5e2e1",
+                        "surface-variant": "#353535",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface-variant": "#d0c5af",
+                        "on-primary": "#3c2f00",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "on-primary-fixed": "#241a00",
+                        "secondary": "#c6c6c6",
+                        "on-tertiary-fixed": "#410001",
+                        "on-secondary": "#303030",
+                        "on-tertiary-fixed-variant": "#930005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#d4af37",
+                        "on-primary-container": "#554300",
+                        "surface-bright": "#393939",
+                        "outline": "#99907c",
+                        "surface": "#131313",
+                        "tertiary-container": "#ff9688",
+                        "outline-variant": "#4d4635",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-primary-fixed-variant": "#574500",
+                        "inverse-on-surface": "#313030",
+                        "tertiary-fixed": "#ffdad5",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-secondary-container": "#b5b5b5",
+                        "on-surface": "#e5e2e1",
+                        "primary-fixed-dim": "#e9c349",
+                        "on-tertiary": "#690003",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary-container": "#474747",
+                        "primary": "#f2ca50",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#e9c349",
+                        "tertiary": "#ffbfb6",
+                        "on-tertiary-container": "#900005",
+                        "surface-container": "#20201f",
+                        "background": "#131313",
+                        "surface-container-highest": "#353535",
+                        "primary-fixed": "#ffe088",
+                        "inverse-primary": "#735c00",
+                        "error-container": "#93000a",
+                        "gold": "#D4AF37",
+                        "neon-green": "#39FF14"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-md-mobile": ["Montserrat"],
+                        "label-caps": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "body-sm": ["Metropolis"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-lg": ["Metropolis"],
+                        "headline-md": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "headline-md-mobile": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "data-mono": ["13px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.2", "letterSpacing": "0.03em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #000000; color: #e5e2e1; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        .gold-border-glow {
+            border: 0.5px solid #D4AF37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+        }
+        .glow-gold:hover {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            border-color: #f2ca50;
+        }
+        .security-heartbeat {
+            animation: heartbeat 2s infinite ease-in-out;
+        }
+        @keyframes heartbeat {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        .scan-line {
+            background: linear-gradient(to bottom, transparent 0%, #D4AF37 50%, transparent 100%);
+            height: 2px;
+            width: 100%;
+            position: absolute;
+            animation: scan 3s infinite linear;
+            opacity: 0.3;
+        }
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+    </style>
+</head>
+<body class="font-body-lg text-body-lg">
+<!-- Top Navigation Bar -->
+<!-- Shared landing navigation: keep identical on every landing page (generated, only the active link differs) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)]">
+    <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+        <a href="/landing/index.html" class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</a>
+        <div class="hidden md:flex items-center gap-8">
+                <a href="/landing/architecture.html" aria-current="page" class="font-label-caps text-label-caps text-primary transition-colors">How It Works</a>
+                <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Security</a>
+                <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Plans</a>
+                <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Status</a>
+                <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/Login.html" class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">Launch Console</a>
+            <button type="button" class="md:hidden text-primary" aria-label="Open menu" aria-controls="mobileNav" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </nav>
+    <div id="mobileNav" class="hidden md:hidden border-t border-white/10 px-margin-mobile py-4 flex flex-col gap-4">
+        <a href="/landing/architecture.html" aria-current="page" class="font-label-caps text-label-caps text-primary">How It Works</a>
+        <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Security</a>
+        <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Plans</a>
+        <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Status</a>
+        <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">About</a>
+    </div>
+</header>
+<main class="pt-32 pb-20">
+    <!-- Hero Header -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center mb-24">
+        <span class="font-label-caps text-label-caps text-primary mb-4 block">Product Architecture</span>
+        <h1 class="font-display-lg text-[40px] md:text-display-lg text-on-surface mb-6 tracking-tight">How Vault Core Works.</h1>
+        <p class="max-w-2xl mx-auto text-on-surface-variant font-body-lg text-body-lg">
+            How a financial statement moves from upload to verdict, and what is checked along the way.
+        </p>
+    </section>
+    <!-- System Flow Map -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-32">
+        <div class="relative rounded-none overflow-hidden gold-border-glow bg-black/40">
+            <img alt="Technical architecture diagram" class="w-full h-auto block opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGAZfO9kXeGexnk9S-I72jn723HZoQ2nBEYgupXwqe-WBZ4gmPtXdfObXE3Z8NWalwZS_vTQxFDEtCYPcBtpkGqraiW24p0Meo6RN2rF36SPDbAuOVMAMkVpInSwdZtwwzUCsB-M36xYa3O5rIBL3FSDUbhckE-755tx9Fgayeg8JR1cvTHeVjRUhBKeigCaCTDA25ZIoDaDpAw_T-8UaOt47ilePHo5_eP-uGJ7bVw_F1UGIrXCPPYGxr5PCCzysh9unp5sdg3SCP"/>
+            <div class="absolute bottom-6 left-6 flex items-center gap-3 glass-panel px-4 py-2">
+                <div class="w-2 h-2 rounded-full bg-neon-green security-heartbeat"></div>
+                <span class="font-data-mono text-data-mono text-neon-green">SYSTEM ARCHITECTURE</span>
+            </div>
+        </div>
+    </section>
+    <!-- Features Bento Grid -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter">
+        <!-- Ingestion Layer (Feature Card) -->
+        <div class="md:col-span-12 lg:col-span-5 glass-panel p-8 relative overflow-hidden group">
+            <div class="scan-line"></div>
+            <div class="flex flex-col h-full justify-between">
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">dataset</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Module 01</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-4">The Ingestion Layer</h2>
+                    <p class="text-on-surface-variant font-body-sm text-body-sm leading-relaxed mb-8">
+                        Upload text PDFs, scanned PDFs, photos, Excel, CSV or plain text. Text is extracted directly; scanned pages and photos go to a vision model; spreadsheet numbers keep their exact formatting. Every file is fingerprinted with SHA-256 the moment it arrives.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 border border-white/5 bg-white/5">
+                        <div class="font-data-mono text-data-mono text-primary mb-1">FORMATS</div>
+                        <div class="text-[10px] text-on-surface-variant">PDF · Scans · XLSX · CSV · JPG</div>
+                    </div>
+                    <div class="p-4 border border-white/5 bg-white/5">
+                        <div class="font-data-mono text-data-mono text-primary mb-1">FINGERPRINT</div>
+                        <div class="text-[10px] text-on-surface-variant">SHA-256 per file</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Analysis Core (Discrepancy Engine) -->
+        <div class="md:col-span-12 lg:col-span-7 glass-panel p-8">
+            <div class="flex items-center gap-2 mb-6">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">Module 02</span>
+            </div>
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-6">The Analysis Core</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="p-5 border-l-2 border-primary bg-primary/5">
+                        <h3 class="font-label-caps text-label-caps text-primary mb-2">Figure Verification</h3>
+                        <p class="text-body-sm text-on-surface-variant">The AI model reports the headline totals. The server only accepts a figure if it is printed in the document, then checks Assets = Liabilities + Equity and the leverage ratio itself.</p>
+                    </div>
+                    <div class="p-5 border-l-2 border-white/10">
+                        <h3 class="font-label-caps text-label-caps text-on-surface mb-2">AI Review</h3>
+                        <p class="text-body-sm text-on-surface-variant">A language model reviews the statement for inconsistencies, missing line items and unusual entries, and has to point to something specific for every finding.</p>
+                    </div>
+                </div>
+                <div class="relative border border-white/10 bg-black p-4 aspect-video flex flex-col justify-center">
+                    <!-- Data Visualization Mock -->
+                    <div class="flex items-end gap-1 h-32 mb-4">
+                        <div class="flex-1 bg-white/10 h-1/2"></div>
+                        <div class="flex-1 bg-white/10 h-3/4"></div>
+                        <div class="flex-1 bg-primary h-full"></div>
+                        <div class="flex-1 bg-white/10 h-2/3"></div>
+                        <div class="flex-1 bg-white/10 h-1/2"></div>
+                        <div class="flex-1 bg-white/10 h-1/3"></div>
+                    </div>
+                    <div class="font-data-mono text-[10px] text-on-surface-variant flex justify-between">
+                        <span>CHECKS</span>
+                        <span class="text-neon-green">ARITHMETIC + AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Immutable Ledger Section -->
+        <div class="md:col-span-12 glass-panel p-8 md:p-12 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full -mr-32 -mt-32"></div>
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+                        <span class="font-label-caps text-label-caps text-on-surface-variant">Module 03</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-4">The Append-Only Vault</h2>
+                    <p class="text-on-surface-variant mb-8 max-w-xl">
+                        Results are written once. The database rejects any attempt to edit or delete them, whichever program tries. Each record keeps the SHA-256 fingerprint of the exact file audited, so anyone holding the original document can confirm it is the one the verdict refers to.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-none bg-white/5">
+                            <span class="material-symbols-outlined text-neon-green text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            <span class="font-data-mono text-data-mono text-on-surface">Database-Enforced Append-Only</span>
+                        </div>
+                        <div class="flex items-center gap-3 px-4 py-2 border border-white/10 rounded-none bg-white/5">
+                            <span class="material-symbols-outlined text-neon-green text-sm" style="font-variation-settings: 'FILL' 1;">security</span>
+                            <span class="font-data-mono text-data-mono text-on-surface">SHA-256 Document Fingerprints</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 bg-surface-container-low p-6 gold-border-glow relative">
+                    <div class="font-data-mono text-[11px] text-primary/80 mb-4 border-b border-white/10 pb-2">DOCUMENT_FINGERPRINT (EXAMPLE)</div>
+                    <div class="space-y-2 opacity-50 overflow-hidden h-32">
+                        <p class="font-data-mono text-[10px] break-all">c3e7be31d1eb5f4131eaa781ea128f9670a723eae823b7db51c1198336a3e05b</p>
+                        <p class="font-data-mono text-[10px] break-all text-on-surface-variant">sample_balance_sheet.csv · BALANCE_SHEET · PASSED</p>
+                    </div>
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="font-label-caps text-[9px] text-neon-green">FINGERPRINT RECORDED</span>
+                        <span class="material-symbols-outlined text-neon-green text-lg">check_circle</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- CTA Section -->
+    <section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-32 text-center">
+        <div class="border-t border-white/5 pt-20">
+            <h2 class="font-headline-md text-headline-md text-on-surface mb-8">See it work on your own statements.</h2>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20demo%20request" class="bg-primary text-on-primary font-label-caps text-label-caps px-10 py-4 hover:glow-gold transition-all duration-300 inline-block text-center">Request Technical Demo</a>
+                <a href="/landing/security.html" class="border border-primary text-primary font-label-caps text-label-caps px-10 py-4 hover:bg-primary/10 transition-all duration-300 inline-block text-center">Security Overview</a>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-white/5">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-gutter max-w-container-max mx-auto">
+        <div class="font-label-caps text-label-caps text-primary mb-4 md:mb-0">VAULT CORE</div>
+        <div class="font-data-mono text-data-mono text-on-surface-variant flex flex-col md:flex-row gap-8 items-center">
+            <span>© 2026 Vault Core.</span>
+            <div class="flex gap-6">
+                <a class="hover:text-on-surface transition-colors" href="/landing/security.html">Security</a>
+            <a class="hover:text-on-surface transition-colors" href="/landing/tiering.html">Plans</a>
+            <a class="hover:text-on-surface transition-colors" href="/landing/status.html">Status</a>
+            <a class="hover:text-on-surface transition-colors" href="/landing/about.html">About</a>
+            <a class="hover:text-on-surface transition-colors" href="/landing/architecture.html">How It Works</a>
+            </div>
+        </div>
+    </div>
+</footer>
+<script>
+    // Micro-interaction for hover effects on glass panels
+    document.querySelectorAll('.glass-panel').forEach(panel => {
+        panel.addEventListener('mousemove', (e) => {
+            const rect = panel.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            panel.style.setProperty('--mouse-x', `${x}px`);
+            panel.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    // Atmospheric parallax on diagram (subtle)
+    window.addEventListener('scroll', () => {
+        const diagram = document.querySelector('.gold-border-glow img');
+        if (diagram) {
+            const scrolled = window.pageYOffset;
+            diagram.style.transform = `translateY(${scrolled * 0.05}px)`;
+        }
+    });
+</script>
+</body></html>

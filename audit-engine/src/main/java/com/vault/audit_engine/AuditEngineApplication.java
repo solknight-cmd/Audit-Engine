@@ -2,14 +2,12 @@ package com.vault.audit_engine;
 
 import com.vault.audit_engine.model.CompanyTenant;
 import com.vault.audit_engine.model.User;
-
-import com.vault.audit_engine.model.CompanyTenant;
-import com.vault.audit_engine.model.User;
 import com.vault.audit_engine.repository.CompanyTenantRepository;
 import com.vault.audit_engine.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -25,6 +23,7 @@ public class AuditEngineApplication {
 	 * This bypasses lifecycle proxy issues and manages database transactions safely.
 	 */
 	@Bean
+	@ConditionalOnProperty(name = "vault.seed-demo-data", havingValue = "true")
 	public CommandLineRunner seedDemoData(UserRepository userRepo,
 										  CompanyTenantRepository tenantRepo,
 										  PasswordEncoder encoder) {
@@ -55,7 +54,6 @@ public class AuditEngineApplication {
 				System.out.println("=================================================");
 				System.out.println("✅ FRESH B2B DEMO PROFILE SUCCESSFULLY SEEDED:");
 				System.out.println("👉 Corporate Email: alex@globalcapital.com");
-				System.out.println("👉 Secure Password: secure2026");
 				System.out.println("=================================================");
 			} else {
 				System.out.println("✅ Persistent multi-tenant user database detected. Skipping seeding cycle.");

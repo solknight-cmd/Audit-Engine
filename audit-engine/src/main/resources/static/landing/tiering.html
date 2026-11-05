@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Institutional Access | Vault Core</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;family=Metropolis:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Metropolis:wght@100..900&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#131313",
+                        "on-background": "#e5e2e1",
+                        "surface-variant": "#353535",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface-variant": "#d0c5af",
+                        "on-primary": "#3c2f00",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "on-primary-fixed": "#241a00",
+                        "secondary": "#c6c6c6",
+                        "on-tertiary-fixed": "#410001",
+                        "on-secondary": "#303030",
+                        "on-tertiary-fixed-variant": "#930005",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#d4af37",
+                        "on-primary-container": "#554300",
+                        "surface-bright": "#393939",
+                        "outline": "#99907c",
+                        "surface": "#131313",
+                        "tertiary-container": "#ff9688",
+                        "outline-variant": "#4d4635",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-primary-fixed-variant": "#574500",
+                        "inverse-on-surface": "#313030",
+                        "tertiary-fixed": "#ffdad5",
+                        "tertiary-fixed-dim": "#ffb4aa",
+                        "on-secondary-container": "#b5b5b5",
+                        "on-surface": "#e5e2e1",
+                        "primary-fixed-dim": "#e9c349",
+                        "on-tertiary": "#690003",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary-container": "#474747",
+                        "primary": "#f2ca50",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#e9c349",
+                        "tertiary": "#ffbfb6",
+                        "on-tertiary-container": "#900005",
+                        "surface-container": "#20201f",
+                        "background": "#000000",
+                        "surface-container-highest": "#353535",
+                        "primary-fixed": "#ffe088",
+                        "inverse-primary": "#735c00",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-md-mobile": ["Montserrat"],
+                        "label-caps": ["Montserrat"],
+                        "display-lg": ["Montserrat"],
+                        "body-sm": ["Metropolis"],
+                        "data-mono": ["JetBrains Mono"],
+                        "body-lg": ["Metropolis"],
+                        "headline-md": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "headline-md-mobile": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "data-mono": ["13px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.2", "letterSpacing": "0.03em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #000000; color: #e5e2e1; }
+        .glow-gold { box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        .glass-panel { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(40px); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+        .gold-border-glow { border: 0.5px solid #D4AF37; box-shadow: 0 0 8px rgba(212, 175, 55, 0.2); }
+        .surgical-divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); }
+    </style>
+</head>
+<body class="font-body-lg text-body-lg selection:bg-primary-container selection:text-on-primary-container">
+<!-- TOP NAVIGATION BAR -->
+<!-- Shared landing navigation: keep identical on every landing page (generated, only the active link differs) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)]">
+    <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+        <a href="/landing/index.html" class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</a>
+        <div class="hidden md:flex items-center gap-8">
+                <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">How It Works</a>
+                <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Security</a>
+                <a href="/landing/tiering.html" aria-current="page" class="font-label-caps text-label-caps text-primary transition-colors">Plans</a>
+                <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Status</a>
+                <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/Login.html" class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">Launch Console</a>
+            <button type="button" class="md:hidden text-primary" aria-label="Open menu" aria-controls="mobileNav" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </nav>
+    <div id="mobileNav" class="hidden md:hidden border-t border-white/10 px-margin-mobile py-4 flex flex-col gap-4">
+        <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">How It Works</a>
+        <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Security</a>
+        <a href="/landing/tiering.html" aria-current="page" class="font-label-caps text-label-caps text-primary">Plans</a>
+        <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Status</a>
+        <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">About</a>
+    </div>
+</header>
+<main class="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+    <!-- HERO SECTION -->
+    <section class="mb-20">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div class="max-w-2xl">
+                <span class="font-label-caps text-label-caps text-primary uppercase tracking-[0.3em] block mb-4">Plans</span>
+                <h1 class="font-display-lg text-display-lg text-on-background mb-6 leading-tight">Start With a Pilot.</h1>
+                <p class="text-on-surface-variant max-w-xl">Vault Core is in its pilot phase. Pricing is agreed with each organisation. Anything marked "planned" is on the roadmap and not available yet.</p>
+            </div>
+            <div class="flex items-center gap-4 bg-surface-container-low px-6 py-4 rounded-lg border border-white/5">
+                <div class="relative w-3 h-3">
+                    <div class="absolute inset-0 bg-primary/20 rounded-full animate-ping"></div>
+                    <div class="absolute inset-0 bg-primary rounded-full"></div>
+                </div>
+                <span class="font-data-mono text-data-mono text-primary uppercase">Pilot Phase</span>
+            </div>
+        </div>
+    </section>
+    <!-- TIER CARDS -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+        <!-- Tier 1: Pilot -->
+        <div class="glass-panel border border-white/10 p-10 flex flex-col h-full hover:border-white/20 transition-all duration-500">
+            <div class="mb-8">
+                <span class="font-data-mono text-data-mono text-on-surface-variant opacity-60">Level 01</span>
+                <h3 class="font-headline-md text-headline-md mt-2 text-on-background">Pilot</h3>
+            </div>
+            <div class="flex-grow space-y-6">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Web console for uploading and auditing financial statements.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="analytics">analytics</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Live audit log and an append-only vault with document fingerprints.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="cloud_done">cloud_done</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Hosted by Vault Core, with service terms agreed per pilot.</p>
+                </div>
+            </div>
+            <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20access%20request" class="mt-12 w-full border border-white/20 text-on-surface py-4 font-label-caps text-label-caps hover:bg-white/5 transition-all block text-center">Request Access</a>
+        </div>
+        <!-- Tier 2: Organisation (Highlighted) -->
+        <div class="bg-surface-container-lowest gold-border-glow p-10 flex flex-col h-full relative overflow-hidden group">
+            <!-- Background visual element -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[80px]"></div>
+            <div class="mb-8 relative z-10">
+                <div class="flex justify-between items-start">
+                    <span class="font-data-mono text-data-mono text-primary">Level 02</span>
+                    <span class="bg-primary/10 text-primary px-3 py-1 text-[10px] font-label-caps border border-primary/20">Recommended</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md mt-2 text-on-background">Organisation</h3>
+            </div>
+            <div class="flex-grow space-y-6 relative z-10">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="key_visualizer" style="font-variation-settings: 'FILL' 1;">key_visualizer</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Several auditors per organisation sharing one vault (self-service user management planned).</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">CSV export of the full audit vault.</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Choice of AI provider, including Anthropic's Claude (planned).</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="lan" style="font-variation-settings: 'FILL' 1;">lan</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">API access for accounting systems (planned).</p>
+                </div>
+            </div>
+            <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20access%20request" class="mt-12 w-full bg-primary text-on-primary py-4 font-label-caps text-label-caps glow-gold group-hover:scale-[1.02] transition-all block text-center">Request Access</a>
+        </div>
+        <!-- Tier 3: Dedicated -->
+        <div class="glass-panel border border-white/10 p-10 flex flex-col h-full hover:border-white/20 transition-all duration-500">
+            <div class="mb-8">
+                <span class="font-data-mono text-data-mono text-on-surface-variant opacity-60">Level 03</span>
+                <h3 class="font-headline-md text-headline-md mt-2 text-on-background">Dedicated</h3>
+            </div>
+            <div class="flex-grow space-y-6">
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="language">language</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Your own deployment, in your cloud or on your premises (planned).</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="gavel">gavel</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Data kept in the country you choose (planned).</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary" data-icon="hub">hub</span>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Single sign-on with your identity provider (planned).</p>
+                </div>
+            </div>
+            <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20enquiry" class="mt-12 w-full border border-white/20 text-on-surface py-4 font-label-caps text-label-caps hover:bg-white/5 transition-all block text-center">Contact Us</a>
+        </div>
+    </section>
+    <!-- BLUEPRINT SECTION -->
+    <section class="max-w-5xl mx-auto">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent to-white/10"></div>
+            <h2 class="font-label-caps text-label-caps text-primary uppercase whitespace-nowrap">Service &amp; Integration</h2>
+            <div class="h-[1px] flex-grow bg-gradient-to-l from-transparent to-white/10"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <!-- Timeline/SLA -->
+            <div>
+                <h4 class="font-headline-md text-headline-md mb-8 text-on-background">Service Terms</h4>
+                <ul class="space-y-8">
+                    <li class="flex items-center justify-between border-b border-white/5 pb-4">
+                        <span class="font-body-lg text-on-surface-variant">Onboarding</span>
+                        <span class="font-data-mono text-primary">Agreed per pilot</span>
+                    </li>
+                    <li class="flex items-center justify-between border-b border-white/5 pb-4">
+                        <span class="font-body-lg text-on-surface-variant">Uptime commitment</span>
+                        <span class="font-data-mono text-primary">Not yet published</span>
+                    </li>
+                    <li class="flex items-center justify-between border-b border-white/5 pb-4">
+                        <span class="font-body-lg text-on-surface-variant">Support</span>
+                        <span class="font-data-mono text-primary">Agreed per pilot</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- API Parameters -->
+            <div class="bg-surface-container-low p-8 border border-white/5 relative overflow-hidden">
+                <h4 class="font-headline-md text-headline-md mb-6 text-on-background flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+                    Current API
+                </h4>
+                <div class="space-y-4 font-data-mono text-[12px] text-on-surface-variant overflow-x-auto">
+                    <div class="flex gap-4">
+                        <span class="text-primary opacity-50 select-none">01</span>
+                        <code>POST /api/v1/audits/upload   (file, documentType)</code>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-primary opacity-50 select-none">02</span>
+                        <code>GET  /api/v1/audits/vault    (your company's records)</code>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-primary opacity-50 select-none">03</span>
+                        <code>GET  /api/v1/metrics</code>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-primary opacity-50 select-none">04</span>
+                        <code>GET  /api/v1/forensic-stream (live log)</code>
+                    </div>
+                    <p class="pt-2 text-[11px] opacity-70">Uses your console sign-in today. API keys for system-to-system access are planned.</p>
+                </div>
+                <!-- Decorative code scan lines -->
+                <div class="absolute inset-0 pointer-events-none opacity-20 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(242,202,80,0.05)_3px)]"></div>
+            </div>
+        </div>
+    </section>
+    <!-- SECURITY INDICATOR -->
+    <div class="mt-32 flex justify-center">
+        <div class="flex items-center gap-6 px-12 py-4 border border-white/10 glass-panel rounded-full">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#00FF41] animate-pulse"></span>
+                <span class="font-data-mono text-[10px] text-on-surface uppercase">Append-Only Vault</span>
+            </div>
+            <div class="w-[1px] h-4 bg-white/10"></div>
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#00FF41] opacity-50"></span>
+                <span class="font-data-mono text-[10px] text-on-surface uppercase">SHA-256 Fingerprints</span>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- FOOTER -->
+<footer class="bg-surface-container-lowest border-t border-white/5 py-gutter px-margin-desktop">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full max-w-container-max mx-auto gap-6">
+        <div class="font-label-caps text-label-caps text-primary">Vault Core</div>
+        <div class="font-data-mono text-data-mono text-on-surface-variant text-center">
+            © 2026 Vault Core.
+        </div>
+        <div class="flex gap-8">
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/security.html">Security</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/tiering.html">Plans</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/status.html">Status</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/about.html">About</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/architecture.html">How It Works</a>
+        </div>
+    </div>
+</footer>
+<script>
+    // Micro-interaction for cards
+    document.querySelectorAll('.glass-panel, .gold-border-glow').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+</script>
+</body></html>

@@ -39,7 +39,13 @@
         <span>●</span> Invalid corporate credentials or domain mapping mismatch.
     </div>
 
+    <div id="logoutBanner" class="hidden mb-6 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-xs flex items-center gap-2">
+        <span>●</span> You have been signed out.
+    </div>
+
     <form action="/api/v1/auth/login" method="POST" class="space-y-6">
+        <!-- Filled from the XSRF-TOKEN cookie below; the server rejects the login without it -->
+        <input type="hidden" name="_csrf" id="csrfField">
 
         <div>
             <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-gold mb-2">Corporate Email Address</label>
@@ -69,7 +75,7 @@
         </div>
 
         <div class="text-[11px] text-slate-400 leading-relaxed bg-surface-dark/50 p-3 rounded border border-white/5">
-            <span class="text-gold font-bold">Notice:</span> Access restricted to verified financial audit departments. Single Sign-On multi-tenant isolation rules apply automatically based on email domains.
+            <span class="text-gold font-bold">Notice:</span> Access restricted to verified financial audit departments. Each account only sees its own company's audits.
         </div>
 
         <button
@@ -82,9 +88,17 @@
 </div>
 
 <script>
-    if (window.location.search.includes('error')) {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('error')) {
         document.getElementById('errorBanner').classList.remove('hidden');
     }
+    if (params.has('logout')) {
+        document.getElementById('logoutBanner').classList.remove('hidden');
+    }
+
+    // The server sets this cookie on every page load (see SecurityConfig)
+    const csrfCookie = document.cookie.split('; ').find(c => c.startsWith('XSRF-TOKEN='));
+    document.getElementById('csrfField').value = csrfCookie ? decodeURIComponent(csrfCookie.split('=')[1]) : '';
 </script>
 </body>
 </html>

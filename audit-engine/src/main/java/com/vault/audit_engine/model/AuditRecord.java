@@ -29,15 +29,24 @@ public class AuditRecord {
     @Column(nullable = false, updatable = false)
     private Instant vaultedAt;
 
+    @Column(updatable = false)
+    private String sourceName; // Uploaded file name, or "api-ingest"
+
+    @Column(updatable = false, length = 64)
+    private String sourceSha256; // Fingerprint of the exact bytes that were audited
+
     // Required by Hibernate
     protected AuditRecord() {}
 
-    public AuditRecord(String companyId, String documentType, String rawExtractedText, String aiAuditReport, String auditStatus) {
+    public AuditRecord(String companyId, String documentType, String rawExtractedText, String aiAuditReport,
+                       String auditStatus, String sourceName, String sourceSha256) {
         this.companyId = companyId;
         this.documentType = documentType;
         this.rawExtractedText = rawExtractedText;
         this.aiAuditReport = aiAuditReport;
         this.auditStatus = auditStatus;
+        this.sourceName = sourceName;
+        this.sourceSha256 = sourceSha256;
         this.vaultedAt = Instant.now();
     }
 
@@ -49,4 +58,6 @@ public class AuditRecord {
     public String getAiAuditReport() { return aiAuditReport; }
     public String getAuditStatus() { return auditStatus; }
     public Instant getVaultedAt() { return vaultedAt; }
+    public String getSourceName() { return sourceName; }
+    public String getSourceSha256() { return sourceSha256; }
 }

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Core | Automated Financial Integrity</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Metropolis:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Metropolis:wght@100..900&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet"/>
+    <style>
+        html, body {
+        height: 100% !important;
+        min-height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background-color: #000000; /* Keeps the deep black canvas consistent */
+    }
+
+    /* Wrap your entire page content (everything EXCEPT the footer) in a main tag */
+    main.content-area {
+        flex: 1 0 auto !important; /* Forces this area to grow and consume ALL empty spaces */
+        width: 100%;
+    }
+
+    /* Target the footer class or element directly */
+    footer, .footer-container {
+        flex-shrink: 0 !important; /* Prevents the footer from squishing */
+        margin-top: auto !important; /* This is the magic phrase that forces it to hit the floor */
+        width: 100%;
+    }
+        html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Add these classes to your topmost wrapper container <div> */
+.main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Add this to your footer tag to push the empty space above it */
+footer {
+    margin-top: auto;
+}
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-gold {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #f2ca50 0%, #d4af37 50%, #735c00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        .gold-border-glow {
+            border: 0.5px solid #d4af37;
+            box-shadow: 0 0 4px rgba(212, 175, 55, 0.4);
+        }
+        body {
+            background-color: #000000;
+            color: #e5e2e1;
+            overflow-x: hidden;
+        }
+        @keyframes heartbeat {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+        .animate-heartbeat {
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#131313",
+                      "on-background": "#e5e2e1",
+                      "surface-variant": "#353535",
+                      "surface-container-high": "#2a2a2a",
+                      "on-surface-variant": "#d0c5af",
+                      "on-primary": "#3c2f00",
+                      "secondary-fixed-dim": "#c6c6c6",
+                      "on-primary-fixed": "#241a00",
+                      "secondary": "#c6c6c6",
+                      "on-tertiary-fixed": "#410001",
+                      "on-secondary": "#303030",
+                      "on-tertiary-fixed-variant": "#930005",
+                      "on-error-container": "#ffdad6",
+                      "primary-container": "#d4af37",
+                      "on-primary-container": "#554300",
+                      "surface-bright": "#393939",
+                      "outline": "#99907c",
+                      "surface": "#131313",
+                      "tertiary-container": "#ff9688",
+                      "outline-variant": "#4d4635",
+                      "on-secondary-fixed": "#1b1b1b",
+                      "on-primary-fixed-variant": "#574500",
+                      "inverse-on-surface": "#313030",
+                      "tertiary-fixed": "#ffdad5",
+                      "tertiary-fixed-dim": "#ffb4aa",
+                      "on-secondary-container": "#b5b5b5",
+                      "on-surface": "#e5e2e1",
+                      "primary-fixed-dim": "#e9c349",
+                      "on-tertiary": "#690003",
+                      "on-secondary-fixed-variant": "#474747",
+                      "surface-container-low": "#1c1b1b",
+                      "secondary-fixed": "#e2e2e2",
+                      "surface-container-lowest": "#0e0e0e",
+                      "inverse-surface": "#e5e2e1",
+                      "secondary-container": "#474747",
+                      "primary": "#f2ca50",
+                      "on-error": "#690005",
+                      "error": "#ffb4ab",
+                      "surface-tint": "#e9c349",
+                      "tertiary": "#ffbfb6",
+                      "on-tertiary-container": "#900005",
+                      "surface-container": "#20201f",
+                      "background": "#131313",
+                      "surface-container-highest": "#353535",
+                      "primary-fixed": "#ffe088",
+                      "inverse-primary": "#735c00",
+                      "error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "margin-mobile": "20px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "headline-md-mobile": ["Montserrat"],
+                      "label-caps": ["Montserrat"],
+                      "display-lg": ["Montserrat"],
+                      "body-sm": ["Metropolis"],
+                      "data-mono": ["JetBrains Mono"],
+                      "body-lg": ["Metropolis"],
+                      "headline-md": ["Montserrat"]
+              },
+              "fontSize": {
+                      "headline-md-mobile": ["20px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                      "label-caps": ["11px", {"lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "data-mono": ["13px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.2", "letterSpacing": "0.03em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="selection:bg-primary-container selection:text-on-primary-container">
+
+<!-- Navigation -->
+<!-- Shared landing navigation: keep identical on every landing page (generated, only the active link differs) -->
+<header class="sticky top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-white/10 shadow-[0px_0px_10px_rgba(212,175,55,0.05)]">
+    <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-6">
+        <a href="/landing/index.html" class="font-display-lg text-display-lg text-primary tracking-tighter">Vault Core</a>
+        <div class="hidden md:flex items-center gap-8">
+                <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">How It Works</a>
+                <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Security</a>
+                <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Plans</a>
+                <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">Status</a>
+                <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors">About</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/Login.html" class="bg-primary text-on-primary px-6 py-2 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95">Launch Console</a>
+            <button type="button" class="md:hidden text-primary" aria-label="Open menu" aria-controls="mobileNav" onclick="document.getElementById('mobileNav').classList.toggle('hidden')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </nav>
+    <div id="mobileNav" class="hidden md:hidden border-t border-white/10 px-margin-mobile py-4 flex flex-col gap-4">
+        <a href="/landing/architecture.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">How It Works</a>
+        <a href="/landing/security.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Security</a>
+        <a href="/landing/tiering.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Plans</a>
+        <a href="/landing/status.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">Status</a>
+        <a href="/landing/about.html" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary">About</a>
+    </div>
+</header>
+<main class="content-area">
+    <!-- Hero Section -->
+    <section class="relative min-h-[90vh] flex flex-col items-center justify-center text-center px-margin-mobile md:px-margin-desktop overflow-hidden">
+        <!-- Background Ambient Light -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <h1 class="font-display-lg text-[40px] md:text-[84px] leading-tight max-w-5xl gold-gradient-text mb-8 tracking-tighter">
+            Automated Financial Integrity. Evidence You Can Check.
+        </h1>
+        <p class="font-body-lg text-body-lg text-on-background/60 max-w-2xl mb-12">
+            Upload a balance sheet, income statement or trial balance. Vault Core reads it, checks the key figures, explains anything that doesn't add up, and records the result in an append-only audit vault.
+        </p>
+        <div class="flex flex-col md:flex-row gap-6">
+            <a href="/Login.html" class="bg-primary text-on-primary px-10 py-4 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 active:scale-95 inline-block text-center">Launch Console</a>
+            <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20access%20request" class="bg-transparent border border-primary text-primary px-10 py-4 font-label-caps text-label-caps hover:bg-primary/5 transition-all duration-300 active:scale-95 inline-block text-center">Request Access</a>
+        </div>
+    </section>
+    <!-- Cinematic Vault Interaction -->
+    <section class="py-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <div class="aspect-video w-full gold-border-glow bg-surface-container-lowest relative group overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+            <!-- Play Overlay -->
+            <div class="absolute inset-0 flex items-center justify-center z-20 cursor-pointer">
+                <div class="w-20 h-20 rounded-full border border-primary/50 bg-black/40 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                    <span class="material-symbols-outlined text-primary text-[48px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                </div>
+            </div>
+            <div class="absolute bottom-8 left-8 z-20">
+                <div class="flex items-center gap-3">
+                    <span class="font-data-mono text-data-mono text-[#00FF41]">SYSTEMS_LIVE</span>
+                    <div class="h-[1px] w-12 bg-white/20"></div>
+                    <span class="font-data-mono text-data-mono text-white/40 uppercase">Processing Loop ID: 99x-VAULT</span>
+                </div>
+            </div>
+            <img class="w-full h-full object-cover opacity-50 grayscale group-hover:opacity-80 transition-opacity duration-700" data-alt="A cinematic 3D macro shot of a complex server hardware component with glowing gold circuits and fiber optic cables pulsing with green light. The setting is a pitch-black, temperature-controlled data center. The mood is highly technical, pristine, and secure, utilizing deep shadows and sharp, precise lighting to highlight the engineering quality. The overall aesthetic is ultra-premium and institutional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTyKI10RSgZAhjk6N_BtXCShxN_A3aqvORjHQlvSquHoQJPykOpT2ZP33Uvr7DZky_Pe89hiXa-Rf24eb3Vp0k1ouiA5EKqxeOTt5CmoXzz_54JYPvvso88-Mim9TPtPH_7siw2rSH36UFRT4qBZiD-H9urup-qdevSGqDjA7RWX4pwnGYJdGlqKmWH3anu6naxEHtAsYRnuwcB5geA8lOZkRqwvHgZZiFYdPDyOHTNM6JNhjfE07Ly9spYHq_Y5kIOasVE_VFfNO-"/>
+        </div>
+    </section>
+    <!-- Live Risk Dashboard Mockup -->
+    <section class="py-24 bg-surface-container-lowest">
+        <div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid md:grid-cols-2 gap-20 items-center">
+            <div class="space-y-8">
+                <h2 class="font-headline-md text-headline-md text-primary">Surgical Anomaly Detection</h2>
+                <p class="font-body-lg text-body-lg text-on-surface-variant">
+                    An AI model reviews each statement and lists specific issues: totals that don't add up, missing line items, unusual entries. The server then re-checks the headline figures itself, so no verdict rests on the AI alone. Anything flagged is left for a human reviewer to decide.
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4 p-4 border-l-2 border-primary bg-primary/5">
+                        <span class="material-symbols-outlined text-primary mt-1">verified_user</span>
+                        <div>
+                            <div class="font-label-caps text-label-caps text-primary">FIGURES CHECKED AGAINST THE SOURCE</div>
+                            <div class="text-body-sm text-on-surface-variant">A figure only counts if it is actually printed in your document.</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 border-l-2 border-[#ffb4ab] bg-error-container/10">
+                        <span class="material-symbols-outlined text-error mt-1">warning</span>
+                        <div>
+                            <div class="font-label-caps text-label-caps text-error">EXPLAINED VERDICTS</div>
+                            <div class="text-body-sm text-on-surface-variant">Passed, high leverage, anomaly detected or unable to verify, always with the reasons.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute -inset-4 bg-primary/5 blur-3xl rounded-full"></div>
+                <div class="relative glass-panel rounded-lg p-1 gold-border-glow overflow-hidden">
+                    <img alt="Surgical Risk Dashboard" class="w-full h-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0djWjRjpcsiKIwuKqvAUb2r2nXnKbSaRQOY9edShj-xY1hS7yWbl3TDdK7nlyKR5KaxfYGKtwUnJRTS3i9C85DWfI3Z4-DGRTmrON7HG2nRwbHhc7GUwyBczU6Tilaf_h710kaLZ5WI1GmaFztNHrLNZqB0iZcaIbGdPqra0UXGfrQKq1Z13WkulIn1EWx_hnVoCs7Bm8wq3X1tVHx_gwFvx6Uf7gTMNESvLnCgjg0neOUv3wi6rLGszBBg8IgxVffP570XTHbb78"/>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Investor Bottom Line -->
+    <section class="py-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <div class="grid md:grid-cols-3 gap-12">
+            <div class="glass-panel p-8 space-y-6 hover:border-primary/40 transition-colors duration-500">
+                <div class="w-12 h-12 flex items-center justify-center border border-primary/20">
+                    <span class="material-symbols-outlined text-primary">security</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md">Company-Level Isolation</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                    Each organisation's documents, results and live logs are visible only to its own users. The server checks this on every request, not just in the interface.
+                </p>
+                <div class="font-data-mono text-data-mono text-primary text-[24px]">Per-Request Checks</div>
+            </div>
+            <div class="glass-panel p-8 space-y-6 hover:border-primary/40 transition-colors duration-500">
+                <div class="w-12 h-12 flex items-center justify-center border border-primary/20">
+                    <span class="material-symbols-outlined text-primary">bolt</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md">Every Common Format</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                    Text PDFs, scanned PDFs, photos, Excel, CSV and plain text. Scanned pages are read by a vision model, and spreadsheet numbers keep exactly the formatting you entered.
+                </p>
+                <div class="font-data-mono text-data-mono text-primary text-[24px]">PDF · XLSX · CSV · JPG</div>
+            </div>
+            <div class="glass-panel p-8 space-y-6 hover:border-primary/40 transition-colors duration-500">
+                <div class="w-12 h-12 flex items-center justify-center border border-primary/20">
+                    <span class="material-symbols-outlined text-primary">history_edu</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md">Append-Only Audit Vault</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                    Results can be added but never edited or deleted: the database itself refuses. Each record keeps a SHA-256 fingerprint of the exact file audited, so anyone holding the original can confirm it.
+                </p>
+                <div class="font-data-mono text-data-mono text-primary text-[24px]">SHA-256 per Document</div>
+            </div>
+        </div>
+    </section>
+    <!-- Final CTA -->
+    <section class="py-32 bg-black relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-surface-container-lowest to-black"></div>
+        <div class="relative z-10 px-margin-mobile text-center max-w-4xl mx-auto">
+            <h2 class="font-display-lg text-[32px] md:text-[56px] gold-gradient-text mb-8">Ready to Audit Your First Statement?</h2>
+            <p class="font-body-lg text-body-lg text-on-surface-variant mb-12">
+                Upload a statement and see the verdict, the figures it was based on, and the reasons for yourself.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center gap-6">
+                <a href="/Login.html" class="bg-primary text-on-primary px-12 py-5 font-label-caps text-label-caps hover:glow-gold transition-all duration-300 inline-block text-center">Launch Console</a>
+                <a href="mailto:adesomi14@gmail.com?subject=Vault%20Core%20enquiry" class="bg-transparent border border-primary text-primary px-12 py-5 font-label-caps text-label-caps hover:bg-primary/5 transition-all duration-300 inline-block text-center">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-white/5 py-gutter">
+    <div class="flex flex-col md:flex-row justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto gap-8">
+        <div class="font-label-caps text-label-caps text-primary">Vault Core</div>
+        <div class="flex items-center gap-8">
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/security.html">Security</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/tiering.html">Plans</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/status.html">Status</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/about.html">About</a>
+            <a class="font-data-mono text-data-mono text-on-surface-variant hover:text-on-surface transition-colors" href="/landing/architecture.html">How It Works</a>
+        </div>
+        <div class="font-data-mono text-data-mono text-on-surface-variant">
+            © 2026 Vault Core.
+        </div>
+    </div>
+</footer>
+<script>
+    // Simple scroll parallax for background ambient lights
+    window.addEventListener('scroll', () => {
+        const lights = document.querySelectorAll('.bg-primary\\/5');
+        const scrolled = window.pageYOffset;
+        lights.forEach((light, i) => {
+            const speed = (i + 1) * 0.2;
+            light.style.transform = `translate(-50%, calc(-50% + ${scrolled * speed}px))`;
+        });
+    });
+
+    // Hover effect for panels to follow mouse with a glow
+    document.querySelectorAll('.glass-panel').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+            card.style.borderImage = `radial-gradient(400px circle at ${x}px ${y}px, rgba(212, 175, 55, 0.4), transparent) 1`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.borderImage = 'none';
+            card.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        });
+    });
+</script>
+</body></html>
