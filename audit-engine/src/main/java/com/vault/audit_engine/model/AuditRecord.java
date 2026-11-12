@@ -35,12 +35,16 @@ public class AuditRecord {
     @Column(updatable = false, length = 64)
     private String sourceSha256; // Fingerprint of the exact bytes that were audited
 
+    @Column(updatable = false)
+    private String uploadedBy; // Email of the signed-in user who ran the audit
+
     // Required by Hibernate
     protected AuditRecord() {}
 
-    public AuditRecord(String companyId, String documentType, String rawExtractedText, String aiAuditReport,
-                       String auditStatus, String sourceName, String sourceSha256) {
+    public AuditRecord(String companyId, String uploadedBy, String documentType, String rawExtractedText,
+                       String aiAuditReport, String auditStatus, String sourceName, String sourceSha256) {
         this.companyId = companyId;
+        this.uploadedBy = uploadedBy;
         this.documentType = documentType;
         this.rawExtractedText = rawExtractedText;
         this.aiAuditReport = aiAuditReport;
@@ -60,4 +64,5 @@ public class AuditRecord {
     public Instant getVaultedAt() { return vaultedAt; }
     public String getSourceName() { return sourceName; }
     public String getSourceSha256() { return sourceSha256; }
+    public String getUploadedBy() { return uploadedBy; }
 }

@@ -46,9 +46,9 @@ public class VaultProcessingService {
      * are vaulted: if the AI provider fails, nothing is stored and the user is told to retry.
      */
     @Async
-    public void process(String companyId, String documentType, ExtractedDocument document) {
-        logger.info("Starting background audit for Company: {} | File: {} | Method: {}",
-                companyId, document.sourceName(), document.method());
+    public void process(String companyId, String uploadedBy, String documentType, ExtractedDocument document) {
+        logger.info("Starting background audit for Company: {} | User: {} | File: {} | Method: {}",
+                companyId, uploadedBy, document.sourceName(), document.method());
         sseLogService.log(companyId, "INIT: Audit started for " + document.sourceName() + " (" + document.method() + ")");
 
         try {
@@ -69,7 +69,7 @@ public class VaultProcessingService {
                         + (check.difference() == null ? "" : " (difference " + check.difference().toPlainString() + ")"));
             }
 
-            AuditRecord record = new AuditRecord(companyId, documentType, document.text(),
+            AuditRecord record = new AuditRecord(companyId, uploadedBy, documentType, document.text(),
                     objectMapper.writeValueAsString(report), report.status(),
                     document.sourceName(), document.sha256());
             auditRecordRepository.save(record);
