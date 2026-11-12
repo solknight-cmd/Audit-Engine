@@ -1,9 +1,14 @@
 package com.vault.audit_engine;
 
+import com.vault.audit_engine.model.User;
+import com.vault.audit_engine.repository.CompanyTenantRepository;
+import com.vault.audit_engine.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -18,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * The browser login flow over real HTTP, as the static Login.html page performs it.
  * (MockMvc's csrf() helper changes how tokens are stored, so this can't live in the MockMvc tests.)
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "vault.seed-demo-data=true")
 @Import(TestcontainersConfiguration.class)
 class LoginFlowTest {
 
@@ -50,9 +55,55 @@ class LoginFlowTest {
         assertTrue(ok.headers().firstValue("Location").orElse("").endsWith("/code.html"));
     }
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CompanyTenantRepository tenantRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Test
+    void accountLocksAfterFiveWrongPasswords() throws Exception {
+        // Its own user, so locking it can't affect the demo login used by the other test
+        String email = "lockout-test@globalcapital.com";
+        User user = new User();
+        user.setEmail(email);
+        user.setFullName("Lockout Test");
+        user.setRole("ROLE_AUDITOR");
+        user.setTenant(tenantRepository.findById("GLOBAL_CAPITAL_CORP_001").orElseThrow());
+        user.setPassword(passwordEncoder.encode("right-password"));
+        userRepository.save(user);
+        String token = csrfToken();
+
+        for (int i = 0; i < 5; i++) {
+            assertTrue(login(token, email, "wrong-password").headers().firstValue("Location").orElse("").endsWith("?error"));
+        }
+
+        // Even the right password is refused while locked, with its own message
+        HttpResponse<String> locked = login(token, email, "right-password");
+        assertEquals(302, locked.statusCode());
+        assertTrue(locked.headers().firstValue("Location").orElse("").endsWith("?locked"));
+    }
+
+    private String csrfToken() throws Exception {
+        HttpResponse<String> page = client.send(
+                HttpRequest.newBuilder(url("/Login.html")).GET().build(), HttpResponse.BodyHandlers.ofString());
+        return page.headers().allValues("Set-Cookie").stream()
+                .filter(h -> h.startsWith("XSRF-TOKEN="))
+                .map(h -> h.substring("XSRF-TOKEN=".length(), h.indexOf(';')))
+                .findFirst()
+                .orElseThrow();
+    }
+
     private HttpResponse<String> login(String token) throws Exception {
         // Demo seed credentials
-        String form = "username=" + enc("alex@globalcapital.com") + "&password=" + enc("secure2026")
+        return login(token, "alex@globalcapital.com", "secure2026");
+    }
+
+    private HttpResponse<String> login(String token, String email, String password) throws Exception {
+        String form = "username=" + enc(email) + "&password=" + enc(password)
                 + (token == null ? "" : "&_csrf=" + enc(token));
         HttpRequest.Builder request = HttpRequest.newBuilder(url("/api/v1/auth/login"))
                 .header("Content-Type", "application/x-www-form-urlencoded")

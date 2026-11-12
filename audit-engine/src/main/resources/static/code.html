@@ -283,6 +283,7 @@
                         </div>
                         <div class="text-[10px] font-mono text-slate-500 break-all">SHA-256: <span id="drawerSha" class="text-slate-400">--</span></div>
                         <div class="text-[10px] font-mono text-slate-500">Read as: <span id="drawerMethod" class="text-slate-400">--</span> · Model: <span id="drawerModel" class="text-slate-400">--</span></div>
+                        <div class="text-[10px] font-mono text-slate-500 break-all">Run by: <span id="drawerUploadedBy" class="text-slate-400">--</span></div>
                     </div>
                 </div>
 
@@ -529,7 +530,7 @@
 
         const quote = value => `"${String(value ?? '').replace(/"/g, '""')}"`;
         // Amounts differ by document type, so they go in one "name=value; ..." column
-        let csvContent = "Record ID,Vaulted At,Document,SHA-256,Document Type,Amounts,Currency,Scale,Failed Checks,Verdict\n";
+        let csvContent = "Record ID,Vaulted At,Run By,Document,SHA-256,Document Type,Amounts,Currency,Scale,Failed Checks,Verdict\n";
         vaultRecords.forEach(record => {
             const report = VaultApi.report(record);
             const figures = report ? report.figures || {} : {};
@@ -538,6 +539,7 @@
             csvContent += [
                 record.id,
                 quote(record.vaultedAt),
+                quote(record.uploadedBy),
                 quote(record.sourceName),
                 quote(record.sourceSha256),
                 quote(record.documentType),
@@ -631,6 +633,7 @@
         set("drawerCompanyId", record.sourceName || '--');
         set("drawerDocBadge", record.documentType);
         set("drawerSha", record.sourceSha256 || 'not recorded');
+        set("drawerUploadedBy", record.uploadedBy || 'not recorded');
         set("drawerMethod", report ? report.extractionMethod : '--');
         set("drawerModel", report ? (report.model || '--') : '--');
 

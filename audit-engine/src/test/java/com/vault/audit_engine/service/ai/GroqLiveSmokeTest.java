@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 
@@ -29,7 +30,8 @@ class GroqLiveSmokeTest {
 
     private final GroqAuditClient client = new GroqAuditClient(RestClient.builder(), new ObjectMapper(),
             "https://api.groq.com/openai/v1", System.getenv("AI_API_KEY"),
-            envOr("AI_API_MODEL", "openai/gpt-oss-120b"), envOr("AI_API_VISION_MODEL", "qwen/qwen3.8-27b"));
+            envOr("AI_API_MODEL", "openai/gpt-oss-120b"), envOr("AI_API_VISION_MODEL", "qwen/qwen3.8-27b"),
+            3, Duration.ofSeconds(2));
 
     @Test
     void realModelExtractsVerifiableFigures() {

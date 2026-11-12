@@ -8,10 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +31,8 @@ class GroqAuditClientTest {
     void setUp() {
         RestClient.Builder builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder).build();
-        client = new GroqAuditClient(builder, objectMapper, "https://groq.test/v1", "test-key", "text-model", "vision-model");
+        client = new GroqAuditClient(builder, objectMapper, "https://groq.test/v1", "test-key", "text-model", "vision-model",
+                3, Duration.ZERO);
     }
 
     private static String completion(String content) throws Exception {
@@ -84,13 +87,40 @@ class GroqAuditClientTest {
     }
 
     @Test
-    void rateLimitBecomesReadableError() {
+    void rateLimitIsRetriedThenSucceeds() throws Exception {
         server.expect(requestTo("https://groq.test/v1/chat/completions"))
+                .andRespond(withStatus(HttpStatus.TOO_MANY_REQUESTS).header("Retry-After", "0"));
+        server.expect(requestTo("https://groq.test/v1/chat/completions"))
+                .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+        server.expect(requestTo("https://groq.test/v1/chat/completions"))
+                .andRespond(withSuccess(completion(ASSESSMENT), MediaType.APPLICATION_JSON));
+
+        ModelAssessment result = client.assess("BALANCE_SHEET",
+                new ExtractedDocument("bs.pdf", "abc", "text", List.of(), "PDF_TEXT", false));
+        assertEquals("PASSED", result.status());
+        server.verify();
+    }
+
+    @Test
+    void rateLimitThatPersistsBecomesReadableError() {
+        server.expect(ExpectedCount.times(3), requestTo("https://groq.test/v1/chat/completions"))
                 .andRespond(withStatus(HttpStatus.TOO_MANY_REQUESTS));
 
         AuditModelException e = assertThrows(AuditModelException.class, () -> client.assess("BALANCE_SHEET",
                 new ExtractedDocument("bs.pdf", "abc", "text", List.of(), "PDF_TEXT", false)));
         assertTrue(e.getMessage().contains("rate limit"));
+        server.verify(); // exactly 3 attempts, then gave up
+    }
+
+    @Test
+    void otherErrorsAreNotRetried() {
+        server.expect(ExpectedCount.once(), requestTo("https://groq.test/v1/chat/completions"))
+                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+
+        AuditModelException e = assertThrows(AuditModelException.class, () -> client.assess("BALANCE_SHEET",
+                new ExtractedDocument("bs.pdf", "abc", "text", List.of(), "PDF_TEXT", false)));
+        assertTrue(e.getMessage().contains("API key"));
+        server.verify();
     }
 
     @Test

@@ -3,16 +3,21 @@ package com.vault.audit_engine.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +33,14 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /** Locked accounts (see LoginAttemptService) get their own message; every other failure stays generic. */
+    private static AuthenticationFailureHandler loginFailureHandler() {
+        ExceptionMappingAuthenticationFailureHandler handler = new ExceptionMappingAuthenticationFailureHandler();
+        handler.setExceptionMappings(Map.of(LockedException.class.getName(), "/Login.html?locked"));
+        handler.setDefaultFailureUrl("/Login.html?error");
+        return handler;
     }
 
     @Bean
@@ -63,6 +76,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/api/v1/auth/login")
                         // Register our custom enterprise tenant session routing rule here!
                         .successHandler(successHandler)
+                        .failureHandler(loginFailureHandler())
                         .permitAll()
                 )
                 .logout(logout -> logout

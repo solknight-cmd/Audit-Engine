@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vault.audit_engine.model.ExtractedDocument;
 import com.vault.audit_engine.model.ModelAssessment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +19,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +31,17 @@ import java.util.List;
 @ConditionalOnProperty(name = "ai.provider", havingValue = "groq", matchIfMissing = true)
 public class GroqAuditClient implements AuditModelClient {
 
+    private static final Logger logger = LoggerFactory.getLogger(GroqAuditClient.class);
+
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
     private final String textModel;
     private final String visionModel;
+    private final int maxAttempts;
+    private final Duration retryDelay;
+
+    // Never wait longer than this between attempts, whatever the provider asks for
+    private static final Duration MAX_RETRY_WAIT = Duration.ofSeconds(30);
 
     // Timeouts come from spring.http.client.* in application.properties
     public GroqAuditClient(RestClient.Builder restClientBuilder,
@@ -39,7 +49,9 @@ public class GroqAuditClient implements AuditModelClient {
                            @Value("${ai.api.url}") String baseUrl,
                            @Value("${ai.api.key}") String apiKey,
                            @Value("${ai.api.model}") String textModel,
-                           @Value("${ai.api.vision-model}") String visionModel) {
+                           @Value("${ai.api.vision-model}") String visionModel,
+                           @Value("${ai.retry.max-attempts:3}") int maxAttempts,
+                           @Value("${ai.retry.delay:2s}") Duration retryDelay) {
         this.restClient = restClientBuilder
                 .baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
@@ -47,6 +59,8 @@ public class GroqAuditClient implements AuditModelClient {
         this.objectMapper = objectMapper;
         this.textModel = textModel;
         this.visionModel = visionModel;
+        this.maxAttempts = Math.max(1, maxAttempts);
+        this.retryDelay = retryDelay;
     }
 
     @Override
@@ -59,25 +73,61 @@ public class GroqAuditClient implements AuditModelClient {
                 0.0,
                 new ResponseFormat("json_object"));
 
-        ChatResponse response;
-        try {
-            response = restClient.post()
-                    .uri("/chat/completions")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(request)
-                    .retrieve()
-                    .body(ChatResponse.class);
-        } catch (RestClientResponseException e) {
-            throw new AuditModelException(describeHttpError(e), e);
-        } catch (RestClientException e) {
-            throw new AuditModelException("Could not reach the AI provider: " + e.getMessage(), e);
-        }
+        ChatResponse response = send(request);
 
         if (response == null || response.choices() == null || response.choices().isEmpty()
                 || response.choices().get(0).message() == null) {
             throw new AuditModelException("The AI provider returned an empty response.");
         }
         return parseAssessment(response.choices().get(0).message().content()).withModel(model);
+    }
+
+    /** Sends the request, waiting and retrying when the provider is rate-limiting (429) or briefly overloaded (503). */
+    private ChatResponse send(ChatRequest request) {
+        for (int attempt = 1; ; attempt++) {
+            try {
+                return restClient.post()
+                        .uri("/chat/completions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(request)
+                        .retrieve()
+                        .body(ChatResponse.class);
+            } catch (RestClientResponseException e) {
+                int status = e.getStatusCode().value();
+                if ((status != 429 && status != 503) || attempt >= maxAttempts) {
+                    throw new AuditModelException(describeHttpError(e), e);
+                }
+                Duration wait = waitBeforeRetry(e, attempt);
+                logger.info("AI provider returned {}; retrying in {} ms (attempt {} of {})",
+                        status, wait.toMillis(), attempt + 1, maxAttempts);
+                sleep(wait);
+            } catch (RestClientException e) {
+                throw new AuditModelException("Could not reach the AI provider: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /** Uses the provider's Retry-After (in seconds) when it sends one, otherwise waits a little longer each time. */
+    private Duration waitBeforeRetry(RestClientResponseException e, int attempt) {
+        Duration wait = retryDelay.multipliedBy(attempt);
+        String retryAfter = e.getResponseHeaders() == null ? null : e.getResponseHeaders().getFirst(HttpHeaders.RETRY_AFTER);
+        if (retryAfter != null) {
+            try {
+                wait = Duration.ofMillis(Math.round(Double.parseDouble(retryAfter.trim()) * 1000));
+            } catch (NumberFormatException ignored) {
+                // An HTTP date instead of seconds: keep our own delay
+            }
+        }
+        return wait.compareTo(MAX_RETRY_WAIT) > 0 ? MAX_RETRY_WAIT : wait;
+    }
+
+    private static void sleep(Duration wait) {
+        try {
+            Thread.sleep(wait.toMillis());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AuditModelException("Interrupted while waiting to retry the AI provider.", e);
+        }
     }
 
     private Object userContent(String documentType, ExtractedDocument document) {
@@ -126,7 +176,7 @@ public class GroqAuditClient implements AuditModelClient {
         return switch (e.getStatusCode().value()) {
             case 401 -> "The AI provider rejected the API key (401). Check AI_API_KEY.";
             case 413 -> "The document is too large for the AI provider (413).";
-            case 429 -> "The AI provider's rate limit was reached (429). Try again in a minute.";
+            case 429 -> "The AI provider's rate limit was still reached after retrying (429). Try again in a minute.";
             default -> "The AI provider returned HTTP " + e.getStatusCode().value() + ".";
         };
     }

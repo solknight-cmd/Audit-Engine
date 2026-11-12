@@ -36,7 +36,11 @@
     </div>
 
     <div id="errorBanner" class="hidden mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs flex items-center gap-2">
-        <span>●</span> Invalid corporate credentials or domain mapping mismatch.
+        <span>●</span> Incorrect email or password.
+    </div>
+
+    <div id="lockedBanner" class="hidden mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-400 text-xs flex items-center gap-2">
+        <span>●</span> Too many failed attempts. This account is locked for 15 minutes.
     </div>
 
     <div id="logoutBanner" class="hidden mb-6 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-xs flex items-center gap-2">
@@ -94,6 +98,9 @@
     const params = new URLSearchParams(window.location.search);
     if (params.has('error')) {
         document.getElementById('errorBanner').classList.remove('hidden');
+    }
+    if (params.has('locked')) {
+        document.getElementById('lockedBanner').classList.remove('hidden');
     }
     if (params.has('logout')) {
         document.getElementById('logoutBanner').classList.remove('hidden');

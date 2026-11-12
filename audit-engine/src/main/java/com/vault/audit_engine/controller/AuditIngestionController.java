@@ -42,7 +42,7 @@ public class AuditIngestionController {
                                   @Valid @RequestBody IngestionRequest request) {
 
         // Push processing off to a background thread instantly
-        processingService.process(user.getTenantId(), request.documentType(),
+        processingService.process(user.getTenantId(), user.getUsername(), request.documentType(),
                 extractionService.fromText(request.rawText()));
 
         // Immediate acknowledgment back to the enterprise client application
@@ -58,7 +58,7 @@ public class AuditIngestionController {
 
         // Extract here, while the upload still exists: it is deleted once this request ends
         ExtractedDocument document = extractionService.extract(file);
-        processingService.process(user.getTenantId(), documentType, document);
+        processingService.process(user.getTenantId(), user.getUsername(), documentType, document);
 
         return "File uploaded successfully. Financial audit processing pipeline has been queued.";
     }

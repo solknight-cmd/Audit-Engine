@@ -15,9 +15,11 @@ import java.util.List;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final LoginAttemptService loginAttempts;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(UserRepository userRepository, LoginAttemptService loginAttempts) {
         this.userRepository = userRepository;
+        this.loginAttempts = loginAttempts;
     }
 
     @Override
@@ -33,7 +35,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority(user.getRole())),
                 user.getTenant().getTenantId(),
                 user.getTenant().getCompanyName(),
-                user.getFullName()
+                user.getFullName(),
+                loginAttempts.isLocked(email)
         );
     }
 }

@@ -39,7 +39,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+// Demo data is off by default; these tests use the two demo tenants
+@SpringBootTest(properties = "vault.seed-demo-data=true")
 @AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 class AuditVaultIntegrationTest {
@@ -97,6 +98,7 @@ class AuditVaultIntegrationTest {
             AuditRecord record = records.get(0);
             assertEquals("PASSED", record.getAuditStatus());
             assertEquals("api-ingest", record.getSourceName());
+            assertEquals("auditor@" + GLOBAL, record.getUploadedBy());
             assertEquals(64, record.getSourceSha256().length());
             assertTrue(record.getAiAuditReport().contains("\"figureCheck\":\"CHECKED_AGAINST_TEXT\""));
 
@@ -140,7 +142,7 @@ class AuditVaultIntegrationTest {
 
     @Test
     void vaultOnlyReturnsCallersOwnTenant() throws Exception {
-        auditRecordRepository.save(new AuditRecord(VANGUARD, "BALANCE_SHEET", "text", "{}", "PASSED", "a.pdf", null));
+        auditRecordRepository.save(new AuditRecord(VANGUARD, "auditor@" + VANGUARD, "BALANCE_SHEET", "text", "{}", "PASSED", "a.pdf", null));
 
         // A Global Capital auditor must not see Vanguard's record
         mockMvc.perform(get("/api/v1/audits/vault").with(user(auditorAt(GLOBAL))))
@@ -179,7 +181,7 @@ class AuditVaultIntegrationTest {
     void databaseRejectsChangesToVaultedRecords() {
         // Vanguard, so this doesn't change the Global record count asserted in the ingest test
         AuditRecord saved = auditRecordRepository.save(
-                new AuditRecord(VANGUARD, "BALANCE_SHEET", "text", "{}", "PASSED", "a.pdf", null));
+                new AuditRecord(VANGUARD, "auditor@" + VANGUARD, "BALANCE_SHEET", "text", "{}", "PASSED", "a.pdf", null));
 
         // Bypasses JPA entirely, so this is the database trigger doing the blocking
         assertThrows(Exception.class, () -> jdbcTemplate.update(
