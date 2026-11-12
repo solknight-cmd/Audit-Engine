@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | Team</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="/js/vault-api.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans selection:bg-[#D4AF37]/30 selection:text-white">
+
+<aside class="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 pt-6 pb-4 bg-[#111827] border-r border-white/10 z-40">
+    <div class="px-6 mb-4 flex items-center justify-between border-b border-white/5 pb-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border border-white/10 shrink-0">
+                <div id="currentUserInitials" class="w-full h-full bg-gradient-to-tr from-slate-700 to-slate-600 flex items-center justify-center text-xs font-bold text-slate-300">--</div>
+            </div>
+            <div class="overflow-hidden">
+                <div id="currentUserName" class="text-xs font-bold text-white truncate">Loading…</div>
+                <div class="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                    <span class="w-1 h-1 rounded-full bg-emerald-400 animate-pulse"></span> <span id="currentCompanyName" class="truncate">--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 mb-6 flex items-center gap-3">
+        <div class="p-2 bg-[#D4AF37]/10 rounded border border-[#D4AF37]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+        </div>
+        <div>
+            <div class="text-sm font-bold text-white leading-tight">Forensic OS</div>
+            <div class="text-[11px] text-slate-500 font-mono tracking-wider">V.4.2.0-Stable</div>
+        </div>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="code.html">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Audit Desktop</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="analytics.html">
+            <span class="material-symbols-outlined">security</span>
+            <span class="text-sm font-medium">Risk Models</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="registry.html">
+            <span class="material-symbols-outlined">account_balance</span>
+            <span class="text-sm font-medium">Ledger Explorer</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="counterparty.html">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Counterparty Intelligence</span>
+        </a>
+        <a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-[#D4AF37] transition-all" href="systemhealth.html">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">System Health</span>
+        </a>
+        <a id="navTeam" class="flex items-center gap-3 px-6 py-3 bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37] transition-all" href="team.html">
+            <span class="material-symbols-outlined">group_add</span>
+            <span class="text-sm font-medium">Team</span>
+        </a>
+    </nav>
+
+    <div class="px-6 mt-auto">
+        <a class="flex items-center gap-2 px-6 py-2 text-xs text-slate-400 hover:text-[#D4AF37] transition-all" href="account.html">
+            <span class="material-symbols-outlined text-sm">manage_accounts</span> My Account
+        </a>
+        <a class="flex items-center gap-2 px-6 py-2 text-xs text-slate-400 hover:text-red-400 transition-all" href="javascript:void(0)" onclick="VaultApi.logout()">
+            <span class="material-symbols-outlined text-sm">logout</span> Sign Out
+        </a>
+    </div>
+</aside>
+
+<main class="ml-64 pt-2 min-h-screen p-6">
+    <div class="max-w-[1100px] mx-auto space-y-6">
+
+        <div class="flex justify-between items-end border-b border-white/5 pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Team</h1>
+                <p class="text-sm text-slate-400">People in <span id="teamCompany">your company</span> who can sign in to Vault Core.</p>
+            </div>
+        </div>
+
+        <section class="bg-[#111827] p-6 border border-white/10 rounded-xl">
+            <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-[#D4AF37]">person_add</span> Invite Someone
+            </h2>
+            <form id="inviteForm" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
+                <input name="fullName" required placeholder="Full name" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+                <input name="email" type="email" required placeholder="name@company.com" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+                <select name="role" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+                    <option value="ROLE_AUDITOR">Auditor</option>
+                    <option value="ROLE_COMPANY_ADMIN">Company admin</option>
+                </select>
+                <button class="py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-slate-950 font-bold text-xs rounded uppercase tracking-wider">Create Invite Link</button>
+                <p data-error class="md:col-span-4 text-xs text-red-400"></p>
+            </form>
+            <p class="text-[11px] text-slate-500 mt-2">Vault Core doesn't send email yet: you'll get a one-time link to send them yourself. Auditors run audits; company admins can also manage this team.</p>
+        </section>
+
+        <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                <tr class="bg-[#0b0f19] text-[#D4AF37] border-b border-white/10">
+                    <th class="p-4 uppercase font-semibold font-mono tracking-wider">Person</th>
+                    <th class="p-4 uppercase font-semibold font-mono tracking-wider">Role</th>
+                    <th class="p-4 uppercase font-semibold font-mono tracking-wider">Status</th>
+                    <th class="p-4 uppercase font-semibold font-mono tracking-wider">Last Sign-In</th>
+                    <th class="p-4"></th>
+                </tr>
+                </thead>
+                <tbody id="teamTableBody"></tbody>
+            </table>
+        </section>
+    </div>
+</main>
+
+<script src="/js/accounts.js"></script>
+<script>
+    let me = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        me = await VaultApi.showCurrentUser();
+        if (me) document.getElementById('teamCompany').textContent = me.companyName;
+        Accounts.wireInviteForm(document.getElementById('inviteForm'), '/api/v1/team', loadTeam);
+        loadTeam();
+    });
+
+    async function loadTeam() {
+        const tbody = document.getElementById('teamTableBody');
+        try {
+            const users = await VaultApi.request('/api/v1/team/users');
+            Accounts.renderUsers(tbody, users, '/api/v1/team', me && me.email, loadTeam);
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-red-400 text-xs">${VaultApi.escapeHtml(e.message)}</td></tr>`;
+        }
+    }
+</script>
+</body>
+</html>

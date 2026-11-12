@@ -17,13 +17,16 @@ public class VaultUserDetails extends User {
 
     public VaultUserDetails(String email, String passwordHash, Collection<? extends GrantedAuthority> authorities,
                             String tenantId, String companyName, String fullName) {
-        this(email, passwordHash, authorities, tenantId, companyName, fullName, false);
+        this(email, passwordHash, authorities, tenantId, companyName, fullName, true, false);
     }
 
-    /** @param locked true while the account is locked after repeated failed logins; login is refused before the password is checked */
+    /**
+     * @param enabled false for a disabled account; sign-in is refused before the password is checked
+     * @param locked  true while the account is locked after repeated failed logins; also refused before the password check
+     */
     public VaultUserDetails(String email, String passwordHash, Collection<? extends GrantedAuthority> authorities,
-                            String tenantId, String companyName, String fullName, boolean locked) {
-        super(email, passwordHash, true, true, true, !locked, authorities);
+                            String tenantId, String companyName, String fullName, boolean enabled, boolean locked) {
+        super(email, passwordHash, enabled, true, true, !locked, authorities);
         this.tenantId = tenantId;
         this.companyName = companyName;
         this.fullName = fullName;

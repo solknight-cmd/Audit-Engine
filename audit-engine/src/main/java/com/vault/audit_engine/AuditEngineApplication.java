@@ -28,8 +28,8 @@ public class AuditEngineApplication {
 										  CompanyTenantRepository tenantRepo,
 										  PasswordEncoder encoder) {
 		return args -> {
-			// Check if the user database is currently empty before trying to seed
-			if (userRepo.count() == 0) {
+			// Seed once, judged by the demo company itself: other accounts (such as the operator) may already exist
+			if (!tenantRepo.existsById("GLOBAL_CAPITAL_CORP_001")) {
 				System.out.println("⏳ Detecting empty security schema... Initializing fresh B2B demo profile.");
 
 				// 1. Programmatically save the corporate tenant wrappers via safe Spring Repositories

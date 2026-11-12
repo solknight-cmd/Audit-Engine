@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Vault Audit Intelligence | Operator</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="/js/vault-api.js"></script>
+    <script src="/js/accounts.js"></script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-200 font-sans">
+
+<!-- The operator's console: client companies and their users. Audits stay private to each company. -->
+<header class="border-b border-white/10 bg-[#111827]">
+    <div class="max-w-[1100px] mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#D4AF37]" style="font-variation-settings: 'FILL' 1;">security</span>
+            <div>
+                <div class="text-sm font-bold text-white">Vault Core · Operator</div>
+                <div id="operatorEmail" class="text-[11px] text-slate-500 font-mono">--</div>
+            </div>
+        </div>
+        <div class="flex items-center gap-5 text-xs">
+            <a href="account.html" class="text-slate-400 hover:text-[#D4AF37]">My Account</a>
+            <a href="javascript:void(0)" onclick="VaultApi.logout()" class="text-slate-400 hover:text-red-400">Sign Out</a>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-[1100px] mx-auto p-6 space-y-6">
+
+    <section class="bg-[#111827] p-6 border border-white/10 rounded-xl">
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm text-[#D4AF37]">domain_add</span> Add a Client Company
+        </h2>
+        <form id="companyForm" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input name="companyName" required placeholder="Company name, e.g. Acme Holdings Ltd" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            <input name="allowedDomain" placeholder="Email domain (optional), e.g. acme.com" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            <input name="adminName" required placeholder="Their admin's full name" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            <input name="adminEmail" type="email" required placeholder="Their admin's email" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            <p class="md:col-span-2 text-[11px] text-slate-500">With an email domain set, only addresses at that domain can join the company. The admin gets a one-time link to set their password, then invites their own auditors.</p>
+            <p data-error class="md:col-span-2 text-xs text-red-400"></p>
+            <div class="md:col-span-2">
+                <button class="px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#F3E5AB] text-slate-950 font-bold text-xs rounded uppercase tracking-wider">Create Company &amp; Invite Admin</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+        <div class="p-4 border-b border-white/5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Client Companies</div>
+        <table class="w-full text-left border-collapse text-xs">
+            <thead>
+            <tr class="bg-[#0b0f19] text-[#D4AF37] border-b border-white/10">
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Company</th>
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Email Domain</th>
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Users</th>
+                <th class="p-4"></th>
+            </tr>
+            </thead>
+            <tbody id="companyTableBody"></tbody>
+        </table>
+    </section>
+
+    <!-- Shown after picking a company -->
+    <section id="usersPanel" class="hidden bg-[#111827] border border-white/10 rounded-xl overflow-hidden">
+        <div class="p-4 border-b border-white/5 flex justify-between items-center">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Users of <span id="usersCompanyName" class="text-white"></span></div>
+            <button onclick="closeUsers()" class="text-slate-400 hover:text-white text-xs">Close</button>
+        </div>
+        <form id="inviteForm" class="p-4 grid grid-cols-1 md:grid-cols-4 gap-3 border-b border-white/5">
+            <input name="fullName" required placeholder="Full name" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            <input name="email" type="email" required placeholder="Email" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+            <select name="role" class="bg-[#0b0f19] border border-white/10 rounded p-2.5 text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+                <option value="ROLE_AUDITOR">Auditor</option>
+                <option value="ROLE_COMPANY_ADMIN">Company admin</option>
+            </select>
+            <button class="py-2.5 bg-white/5 border border-white/10 text-slate-200 font-bold text-xs rounded uppercase tracking-wider hover:bg-white/10">Create Invite Link</button>
+            <p data-error class="md:col-span-4 text-xs text-red-400"></p>
+        </form>
+        <table class="w-full text-left border-collapse text-xs">
+            <thead>
+            <tr class="bg-[#0b0f19] text-[#D4AF37] border-b border-white/10">
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Person</th>
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Role</th>
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Status</th>
+                <th class="p-4 uppercase font-semibold font-mono tracking-wider">Last Sign-In</th>
+                <th class="p-4"></th>
+            </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+        </table>
+    </section>
+</main>
+
+<script>
+    let me = null;
+    let selectedCompany = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        me = await VaultApi.me().catch(() => null);
+        if (me) document.getElementById('operatorEmail').textContent = me.email;
+        wireCompanyForm();
+        // The invite form always targets whichever company is open
+        Accounts.wireInviteForm(document.getElementById('inviteForm'),
+            () => `/api/v1/admin/companies/${encodeURIComponent(selectedCompany.companyId)}`, refresh);
+        loadCompanies();
+    });
+
+    async function loadCompanies() {
+        const tbody = document.getElementById('companyTableBody');
+        try {
+            const companies = await VaultApi.request('/api/v1/admin/companies');
+            if (companies.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-500 font-mono">No client companies yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            companies.forEach(company => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white/5 hover:bg-white/5 transition-colors';
+                row.innerHTML = `
+                    <td class="p-4"><div class="font-bold text-white">${VaultApi.escapeHtml(company.companyName)}</div>
+                        <div class="text-slate-500 font-mono text-[11px]">${VaultApi.escapeHtml(company.companyId)}</div></td>
+                    <td class="p-4 text-slate-400 font-mono">${VaultApi.escapeHtml(company.allowedDomain || 'Any')}</td>
+                    <td class="p-4 text-slate-300">${company.users}</td>
+                    <td class="p-4 text-right"><button class="text-[#D4AF37] font-bold hover:underline">Manage users</button></td>`;
+                row.querySelector('button').addEventListener('click', () => openUsers(company));
+                tbody.appendChild(row);
+            });
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-red-400">${VaultApi.escapeHtml(e.message)}</td></tr>`;
+        }
+    }
+
+    function wireCompanyForm() {
+        const form = document.getElementById('companyForm');
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            const error = form.querySelector('[data-error]');
+            error.textContent = '';
+            try {
+                const result = await VaultApi.request('/api/v1/admin/companies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        companyName: form.companyName.value, allowedDomain: form.allowedDomain.value,
+                        adminName: form.adminName.value, adminEmail: form.adminEmail.value
+                    })
+                });
+                form.reset();
+                Accounts.showLink(result.adminInvite);
+                loadCompanies();
+            } catch (e) {
+                error.textContent = e.message;
+            }
+        });
+    }
+
+    async function openUsers(company) {
+        selectedCompany = company;
+        document.getElementById('usersCompanyName').textContent = company.companyName;
+        document.getElementById('usersPanel').classList.remove('hidden');
+        await loadUsers();
+        document.getElementById('usersPanel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function loadUsers() {
+        const base = `/api/v1/admin/companies/${encodeURIComponent(selectedCompany.companyId)}`;
+        const tbody = document.getElementById('usersTableBody');
+        try {
+            const users = await VaultApi.request(`${base}/users`);
+            Accounts.renderUsers(tbody, users, base, me && me.email, refresh);
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-red-400">${VaultApi.escapeHtml(e.message)}</td></tr>`;
+        }
+    }
+
+    function refresh() {
+        loadUsers();
+        loadCompanies();
+    }
+
+    function closeUsers() {
+        selectedCompany = null;
+        document.getElementById('usersPanel').classList.add('hidden');
+    }
+</script>
+</body>
+</html>

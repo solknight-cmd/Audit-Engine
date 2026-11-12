@@ -25,8 +25,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // Query user table record securely by email identity
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new UsernameNotFoundException("No corporate profile mapped to email: " + email));
+        // Invited but no password chosen yet: treated like an unknown account (generic "incorrect" message)
+        if (user.getStatus() == User.Status.INVITED || user.getPassword() == null) {
+            throw new UsernameNotFoundException("Invitation not accepted yet: " + email);
+        }
 
         // Role is stored with its ROLE_ prefix, e.g. ROLE_AUDITOR
         return new VaultUserDetails(
@@ -36,6 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getTenant().getTenantId(),
                 user.getTenant().getCompanyName(),
                 user.getFullName(),
+                user.getStatus() != User.Status.DISABLED,
                 loginAttempts.isLocked(email)
         );
     }

@@ -17,8 +17,8 @@ const VaultApi = (() => {
         const response = await fetch(path, { ...options, method, headers, credentials: 'same-origin' });
 
         if (response.status === 401) {
-            // Session expired or never logged in
-            window.location.href = '/Login.html';
+            // The page loaded signed in, so the session has since ended (timed out, or an admin changed the account)
+            window.location.href = '/Login.html?expired';
             throw new Error('Not logged in');
         }
 
@@ -158,6 +158,12 @@ const VaultApi = (() => {
             set('currentUserInitials', initials);
             set('currentUserName', user.fullName || user.email);
             set('currentCompanyName', user.companyName);
+            // Team management is only for company admins (the server enforces this too)
+            const teamLink = document.getElementById('navTeam');
+            if (teamLink && user.role === 'ROLE_COMPANY_ADMIN') {
+                teamLink.classList.remove('hidden');
+                teamLink.classList.add('flex');
+            }
             return user;
         } catch (e) {
             return null;
