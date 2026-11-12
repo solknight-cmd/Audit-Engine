@@ -14,8 +14,8 @@ public class CompanyTenant {
     @Column(name = "company_name", nullable = false)
     private String companyName;
 
-    @Column(name = "allowed_domain", nullable = false, unique = true)
-    private String allowedDomain; // e.g., "globalcapital.com", "vanguard.com"
+    @Column(name = "allowed_domain", unique = true)
+    private String allowedDomain; // e.g. "globalcapital.com"; when set, only addresses at this domain can be invited
 
     @Column(name = "created_at")
     private ZonedDateTime createdAt = ZonedDateTime.now();
@@ -26,7 +26,7 @@ public class CompanyTenant {
     public CompanyTenant(String tenantId, String companyName, String allowedDomain) {
         this.tenantId = tenantId;
         this.companyName = companyName;
-        this.allowedDomain = allowedDomain;
+        this.allowedDomain = normalizeDomain(allowedDomain);
     }
 
     // Getters and Setters
@@ -35,5 +35,13 @@ public class CompanyTenant {
     public String getCompanyName() { return companyName; }
     public void setCompanyName(String companyName) { this.companyName = companyName; }
     public String getAllowedDomain() { return allowedDomain; }
-    public void setAllowedDomain(String allowedDomain) { this.allowedDomain = allowedDomain; }
+    public void setAllowedDomain(String allowedDomain) { this.allowedDomain = normalizeDomain(allowedDomain); }
+
+    private static String normalizeDomain(String domain) {
+        if (domain == null || domain.isBlank()) {
+            return null;
+        }
+        String trimmed = domain.trim().toLowerCase();
+        return trimmed.startsWith("@") ? trimmed.substring(1) : trimmed;
+    }
 }

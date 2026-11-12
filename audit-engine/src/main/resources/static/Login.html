@@ -47,6 +47,18 @@
         <span>●</span> You have been signed out.
     </div>
 
+    <div id="passwordSetBanner" class="hidden mb-6 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-xs flex items-center gap-2">
+        <span>●</span> Your password is set. Sign in with it below.
+    </div>
+
+    <div id="disabledBanner" class="hidden mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs flex items-center gap-2">
+        <span>●</span> This account has been disabled. Contact your administrator.
+    </div>
+
+    <div id="expiredBanner" class="hidden mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-400 text-xs flex items-center gap-2">
+        <span>●</span> Your session ended. It timed out, or an administrator changed your account. Sign in again.
+    </div>
+
     <form action="/api/v1/auth/login" method="POST" class="space-y-6">
         <!-- Filled from the XSRF-TOKEN cookie below; the server rejects the login without it -->
         <input type="hidden" name="_csrf" id="csrfField">
@@ -99,6 +111,9 @@
     if (params.has('error')) {
         document.getElementById('errorBanner').classList.remove('hidden');
     }
+    ['passwordSet', 'disabled', 'expired'].forEach(name => {
+        if (params.has(name)) document.getElementById(name + 'Banner').classList.remove('hidden');
+    });
     if (params.has('locked')) {
         document.getElementById('lockedBanner').classList.remove('hidden');
     }
